@@ -4,7 +4,7 @@
 
 ## 実行
 
-必要条件は Linux x86_64、Python 3、ローカル Docker Engine/buildx、cgroup v2 の memory controller、非 root の実行ユーザーです。そのユーザーがローカル Docker socket を利用でき、専用コンテナの cgroup を `/sys/fs/cgroup` と `/proc` から読める必要があります。共有 cgroup の設定は変更しません。WSL2 は未検証です。Windows-mounted filesystem、GPU、ARM、複数 worker はこの profile の対象外です。
+必要条件は Linux x86_64、Python 3、ローカル Docker Engine/buildx、cgroup v2 の memory controller、非 root の実行ユーザーです。そのユーザーがローカル Docker socket を利用でき、専用コンテナの cgroup を `/sys/fs/cgroup` と `/proc` から読める必要があります。共有 cgroup の設定は変更しません。Linux ネイティブでの実行に WSL は不要です。WSL2 は未検証で、初期対応・Issue #1 の必須受入条件には含めず、追加要望時に別途検証します。Windows-mounted filesystem、GPU、ARM、複数 worker はこの profile の対象外です。
 
 リポジトリルートで実行します。
 
