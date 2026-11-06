@@ -29,4 +29,6 @@
 
 ## 未検証・完了に含めない項目
 
-WSL2 は実行可能な環境がなく未検証です。Windows host build / WSL kernel / distro / Linux filesystem / cgroup readback を記録して同じ全suiteを再実行するまで、WSL対応と Issue #1 の該当受入条件は未達です。nested/boxed index、全tuple幅、実形式データ、任意の入力最大サイズ、GPU/JS/複数worker/他architectureも未認定です。Issue #1 と Gate A 全体の完了は別です。
+WSL2 は実行可能な環境がなく未検証です。WSL/WSL2 を必須とした従来の記載は、ユーザー指定でない仮定を要件化したものとして訂正しました。Linux ネイティブの利用前提・Issue #1 の受入条件ではなく、未実測をその完了のブロッカーにしません。追加要望時は Windows host build / WSL kernel / distro / Linux filesystem / cgroup readback を記録して同じ全 suite を再実行し、別 profile として対応可否を判断します。この訂正は WSL 検証の成功や Native Windows 対応の不要を意味しません。
+
+nested/boxed index、全tuple幅、実形式データ、任意の入力最大サイズ、GPU/JS/複数worker/他architectureも未認定です。Issue #1 と Gate A 全体の完了は別です。

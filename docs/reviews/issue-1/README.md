@@ -15,4 +15,8 @@
 
 最終native検証は固定buildから全191ケースを再実行し成功しました。旧版の途中結果や明示中断したrunを完了証拠に採用しません。レビュー記録の「pending」は各レビュー時点の履歴であり、最終状態はこの索引・runtime evidence・PRのCIを確認してください。
 
-未解決の環境制約はWSL2の実測ができないことです。stock APIのpartial-read error消失・checked close不在などは実測された後続primitive要件として残し、このIssueで安全なpublish能力を宣言しません。Issue #1を自動closeするPR本文にはしません。
+レビュー当時は WSL2 を必須とする計画に基づき、未実測を受入未達として記録し、PR #20 も Issue #1 を自動 close しない本文にしました。各レビュー原文・入力 hash・Linux 実測記録は、その時点の記録として変更しません。
+
+その後、WSL/WSL2 がユーザー指定ではなかったため、[設計](../../../DESIGN.md)と[実装計画](../../implementation/issue-1-plan.md)の必須条件から外しました。WSL2 は引き続き未検証で追加要望時の別対応です。レビュー原文の「WSL 未実測で Issue を open に保つ」という判断は旧範囲に対するもので、現行の Linux ネイティブの完了条件ではありません。この要件訂正を過去のレビューが検証したとは主張しません。
+
+stock API の partial-read error 消失・checked close 不在などは実測された後続 primitive 要件として残し、この Issue で安全な publish 能力を宣言しません。

@@ -1,8 +1,12 @@
 # Issue #1 実装計画: 固定 Bend 2 実行基盤とリソース制限の検証
 
-状態: **計画、未実装・未実行**。作成日: 2026-11-06。計画作成担当: Astra。
+計画作成時の状態: **計画、未実装・未実行**。作成日: 2026-11-06。計画作成担当: Astra。
 
-対象は [Issue #1](https://github.com/sh4869221b/bend-xt-import/issues/1) と [DESIGN.md](../../DESIGN.md) revision 0.4 §§2, 4, 11。基準リポジトリ commit は `5b4643c6714e025bc248fbdbe711d54f747d8fc6`、DESIGN.md の SHA-256 は `b4a598ef5487e64bcfe7593400866ad6664b46f45f172b0020d29491e6f61386`。Issue 本文を 2026-11-06 に GitHub から読み取った。本書の試験と受入条件は今後行う作業であり、成功結果ではない。
+**実行対象の訂正（2026-11-06）:** WSL/WSL2 はユーザー指定ではなく設計側で加えた仮定だったため、以下の現行受入条件から外す。必須実行対象は Linux ネイティブとし、WSL は追加要望があった場合に独立した profile として検証する。WSL 未実測は Linux ネイティブの Issue #1 完了を妨げず、対応済みを意味するものでもない。その他の実験・安全性・予算・Gate A 条件は変更しない。Native Windows の将来対応可能性も否定しない。
+
+下記の調査・未実施という記述と基準 hash は計画作成時点の記録である。[訂正前の計画](https://github.com/sh4869221b/bend-xt-import/blob/65422592ee603a8db17ef5d41af4c615a436fb98/docs/implementation/issue-1-plan.md)を保持し、実装後の検証結果は[能力表](../runtime/capabilities.md)と[evidence](../runtime/evidence/)を参照する。
+
+対象は [Issue #1](https://github.com/sh4869221b/bend-xt-import/issues/1) と [DESIGN.md revision 0.4](https://github.com/sh4869221b/bend-xt-import/blob/5b4643c6714e025bc248fbdbe711d54f747d8fc6/DESIGN.md) §§2, 4, 11（計画作成時の根拠）。基準リポジトリ commit は `5b4643c6714e025bc248fbdbe711d54f747d8fc6`、DESIGN.md の SHA-256 は `b4a598ef5487e64bcfe7593400866ad6664b46f45f172b0020d29491e6f61386`。Issue 本文を 2026-11-06 に GitHub から読み取った。本書の試験と受入条件は今後行う作業であり、成功結果ではない。
 
 実装開始条件は、別の Astra による本計画の独立レビュー、指摘修正、残存する実装阻害事項の解消である。本書の追加以外にコード、CI、環境設定を変更していない。以前の未承認実装 `/workspace/fallout-xml-bend` は参照・再利用・変更・公開しない。
 
@@ -189,7 +193,7 @@ P10は実験用にbyte-visitsをrun全体で累積し、上限 **1073741824 visi
 | U3 Bend probes | `tests/runtime/probes/{argv_exit,binary_roundtrip,offsets,exclusive_create,io_errors,short_io,affine_arrays,chunk_stream,sha_primitives}.bend`, `tests/runtime/negative/` | P01–P09とoracle/expected failure、所有権負例。U2後 |
 | U4 representation/work | `tests/runtime/probes/{budget_work,memory_shapes}.bend`, `tests/runtime/fixtures/generate.py`, `tools/runtime/measure.py`, `docs/runtime/resource-model.md` | charge式・定量記録・counter/plateau試験。大stressはU5導入後 |
 | U5 OS ceiling/faults | `tools/runtime/limited_run.py`, `tests/runtime/native/fault_inject.c`, `tests/runtime/probes/memory_pressure.bend` | 1GiB cgroup、graceful予算拒否、host allocation失敗、killの別結果。U2とU3最小case後 |
-| U6 report/CI | `.github/workflows/runtime-probes.yml`, `docs/runtime/README.md`, `docs/runtime/capabilities.md`, `docs/runtime/evidence/<run-id>.*` | 下記gates、Linux/WSL対応表、blocker・未実施明記。U1–U5結果に依存 |
+| U6 report/CI | `.github/workflows/runtime-probes.yml`, `docs/runtime/README.md`, `docs/runtime/capabilities.md`, `docs/runtime/evidence/<run-id>.*` | 下記gates、Linuxネイティブ対応表、blocker・対象外・未実施明記。U1–U5結果に依存 |
 
 名前は計画上の候補。必要のない抽象化やprod moduleを追加しない。generated C/native binaries、large fixtures、compiler cache、scratchはversion管理せず、`.gitignore`に局所的に追加する。small expected vectors/テスト仕様とsanitized evidence summaryをcommitし、full logsはCI artifactに保存する。artifact manifestにhashを残す。DESIGNとDESIGN_REVIEWの履歴的主張は勝手に書き換えない。
 
@@ -201,7 +205,7 @@ P10は実験用にbyte-visitsをrun全体で累積し、上限 **1073741824 visi
 
 - PRごと: lock schema/digest、source取得、check/native build、P01–P10小規模、negative ownership、short IOとerror injection、small-limit cgroup harness test、成果物とログの保存。workflowはread-only repo permission、第三者actionsはfull SHA、secret不要。
 - full-resource job: 実1GiB cgroup上限、実charge境界、long-stream plateau、allocation failure、OOM/kill、sparse offset境界。supported Linux runnerで実施し、resource gateとして必須。環境がcontrollerを提供しなければstatusはunsupported/failedでありsuccessにしない。
-- WSL2: distro/kernel/Windows host build/filesystemとcgroup能力を記録し、Linux filesystem（例: distro側ext4）上で同じsuiteを再実行。`/mnt/c`などのWindows-mounted FSは対応宣言外。WSL runnerを常設できなければ、manual full runのimmutable evidenceをrequired checklistにする。Linux結果をWSLの実測と偽らない。
+- WSL2 はこの Issue の必須 CI・受入 checklist に含めない。追加要望があった場合は別 profile として distro/kernel/Windows host build/filesystem と cgroup 能力を記録し、Linux filesystem（例: distro側ext4）上で同じ suite を再実行してから対応を判断する。`/mnt/c` などの Windows-mounted FS は別途検証が必要。Linux 結果を WSL の実測と偽らない。
 - backend/arch/worker数が変われば別profileとして再測定。CIのcache hitだけに依存せずclean-fetch runを含める。failureでも有限サイズのlogsを保存する。
 
 ### PRレビューで確認するもの
@@ -212,7 +216,7 @@ P10は実験用にbyte-visitsをrun全体で累積し、上限 **1073741824 visi
 4. 各P/Uのcase IDがactual evidenceに結び付き、exit/signal、injection applied、expected failure、timeoutを区別。未実行を緑にするrunnerを拒否する。
 5. 測定charge式の根拠、256MiBと1GiBの独立性、RSS/VmSize/cgroup/workの意味、未検証input上限の記載を確認する。
 6. allocation failure/OOM/cancellationでも成功resultやpublish outputが出ない。production publication能力はblockedのまま。
-7. Linux/WSLの検証表が実態どおり。未実施platformの受入条件をチェック済みにしない。
+7. Linux ネイティブの検証表が実態どおり。WSL は追加要望時の別対応・未検証と明記し、未実施 platform を対応済みにしない。WSL 未実測をこの Issue の必須受入未達として扱わない。
 
 Issue #1を実装完了にできるのは、固定環境でrequired experimentsを実行し、計測・失敗観測・runbook・最小CIが揃った時点。発見したstock API不足を隠さず、後続blocked capabilityとprimitive requirementsを引き継ぐ。主要resource成立性が未検証なら、調査PRを取り込めてもIssueの当該受入条件は未達のままにする。これによりIssue完了とGate A全体/製品公開完成を区別する。
 
@@ -223,10 +227,10 @@ Issue #1を実装完了にできるのは、固定環境でrequired experiments�
 | Bun/Clang/libc/CI imageのexact version/digest | U1で実在artifactと互換性を確認。lock完成前の測定は採用結果にしない |
 | source pinが実native compile/run可能か | U2。静的なAPI存在は成功証明にならない |
 | stock Array/Listの実費用・live解放後のretention | U4。charge式と256MiB内workloadの成立を実測するまでmemory-safe/サイズ対応を宣言しない |
-| cgroup delegation/WSL hostでの1GiB強制 | U5。専用leafを作れない環境ではmemory-limit verifiedにしない |
+| Linux native hostでのcgroup delegation/1GiB強制 | U5。専用leafを作れない環境ではmemory-limit verifiedにしない |
 | 1GiB charged-memory profileとDESIGNの契約の整合 | この計画の独立レビューで判定。strict RSS ceilingが必要なら追加設計へblock |
 | partial read errorの扱い、checked-close不在 | P06実測後に後続primitive要件を確定。error-transparent/safe publishを有効化しない |
 | IO malloc/arena allocation失敗の具体的exit/signal | fault injectionとOS limitで別々に測定。code5に一律変換した事実を作らない |
-| 最小CIのresource-capable runner、WSL evidence | U6で確定。スキップと対応認証を分離 |
+| 最小CIのLinux resource-capable runner | U6で確定。スキップと対応認証を分離 |
 
 本計画時点で実施したのは Issue/DESIGN と固定 upstream source の読み取り、pin/license/API/runtimeの静的確認、Linux公式仕様の確認のみ。Bend compile/run、故障注入、メモリ測定、CI、WSL実行は **すべて未実施**。

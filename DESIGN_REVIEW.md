@@ -1,6 +1,8 @@
 # Design review record
 
-Recorded on 2026-11-06 for [DESIGN.md](DESIGN.md), design revision 0.4.
+Recorded on 2026-11-06 for [DESIGN.md revision 0.4](https://github.com/sh4869221b/bend-xt-import/blob/5b4643c6714e025bc248fbdbe711d54f747d8fc6/DESIGN.md).
+
+Historical record: the repository state, design digest, and review claims below refer to that publication. Current [DESIGN.md](DESIGN.md) revision 0.5 removes the unrequested WSL requirement; the earlier reviews are not evidence of reviewing that correction. WSL remains unverified and is a separate scope if requested, not a Linux-native acceptance gate.
 
 This repository contains the proposed design and this review record. It does not contain an implementation, executable, or executed test suite. Planned checks in the design are acceptance requirements, not test results.
 

@@ -1,6 +1,6 @@
 # Bend 2 xTranslator Importer: Fallout 4 design
 
-Design revision: 0.4, 2026-11-06, incorporating independent review rounds 1 through 3. This is a proposed, testable implementation specification, not an implemented or certified importer. The complete intended product handles both inline and localized Fallout 4 plugins. Milestones below deliberately separate those capabilities; an inline-only prototype must never be advertised as completing the full product.
+Design revision: 0.5, 2026-11-06. This revision corrects only the platform scope; the recorded independent design reviews concern revision 0.4, which incorporated rounds 1 through 3. This is a proposed, testable implementation specification, not an implemented or certified importer. The complete intended product handles both inline and localized Fallout 4 plugins. Milestones below deliberately separate those capabilities; an inline-only prototype must never be advertised as completing the full product.
 
 ## 1. Product contract and non-negotiable properties
 
@@ -10,7 +10,7 @@ The program is a conservative rewriter, not a plugin generator, merger, translat
 
 Success means every selected XML entry has a documented result, every intended change is verified, and a new output bundle has been published without overwriting the inputs or any existing output. No silent partial success. Unsupported targeted content is a hard error unless the user explicitly excluded those entries before planning. Being able to copy an unknown field is not support for translating it.
 
-Initially support Linux native binaries and WSL's Linux filesystem. Native Windows is a later runtime port. Do not claim that storing files on a Windows-mounted filesystem has the same publication/durability semantics until those semantics pass tests. Output is a replacement copy with the **original plugin filename**, inside a new directory. It must not be installed as a second plugin alongside the original. The CLI never installs into the live game directory.
+The initial required runtime target is Linux native binaries on a tested Linux filesystem. WSL/WSL2 was added as a design assumption, not a user requirement; it is not a prerequisite for Linux-native use or an acceptance gate for the initial product. WSL support is a separate scope to consider if requested, and would require its own runtime, resource-limit, filesystem, and publication/durability validation. Native Windows remains a possible later runtime port; this correction does not declare Windows support unnecessary. Do not claim that storing files on a Windows-mounted filesystem has the same publication/durability semantics until those semantics pass tests. Output is a replacement copy with the **original plugin filename**, inside a new directory. It must not be installed as a second plugin alongside the original. The CLI never installs into the live game directory.
 
 ## 2. Evidence and pinned dependencies
 
