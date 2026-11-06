@@ -1,0 +1,4322 @@
+{
+  "schema": 1,
+  "description": "Linux x86_64 experiments; not WSL or production importer certification",
+  "inputs": {
+    "tools/runtime/Dockerfile": "b8287ac2fc8719b83a69281f0b5ffa144bda85f94c6dac5f90d1b62190fa4edc",
+    "tools/runtime/bootstrap.py": "d24ca344da53f8d5415f522844a10454e90090f5653f46459328318d64653420",
+    "tools/runtime/build_probes.py": "c485f1b064285bf1d0757a21a73f248cb2ad3b6138bedfd7b65d1b9486e8082b",
+    "tools/runtime/case_spec.py": "1ec30a5a89c5ce5ac8f696c04d584efe9a9d7e0de58dd51855b1175a5f3e6b5e",
+    "tools/runtime/experiment.py": "f9f391c588846e362448582ec1dc65c144d5460ed354b3a5348e0a1a409cbf11",
+    "tools/runtime/fetch_toolchain.py": "13b77171a14ca20ccb0f5893569db14aff15e4684ce2a09740f0a4add22102b9",
+    "tools/runtime/integrity.py": "38384136a823c87f22b856d5a249015139388f5a01740d512e039c93b7bc01b0",
+    "tools/runtime/measure.py": "44098242dd9a91f5fcf50e3b2ac09b5d3267323b380cde0beaafce014dd53764",
+    "tools/runtime/native_entry.py": "d659510563852c3da45865fc941c407c5621422a0f5319d2ae0b12f39fcf70c4",
+    "tools/runtime/packages.lock": "b8efb4b896d72aa32227c88527c2f10d6fadf8147b7da50d43ee06ef82f99fcc",
+    "tools/runtime/probe-packages.lock": "bf7d367329bf606aa493b21308294b3cae259d45360d0dda06095c60567b640b",
+    "tools/runtime/run_probes.py": "270b5105bdee9e6f94a0cd675f0e1da4bc5765d11837db98285aa16df8bcf7e3",
+    "tools/runtime/summarize.py": "b4a2002c8a88f45de8f76720a28f7b5f352c5c4c020a7b36497fad2964ad5fec",
+    "tools/runtime/test_evidence.py": "f4d2347b0a44aa09ac7209a211bdc505a08dbe696fd6bb8dfb94adcc16206ce8",
+    "tools/runtime/verify_lock.py": "b0cf0aa43214c596efa9244cdf1c1dab2f52f2ced4bbb90845b8a84269e42ca4",
+    "tests/runtime/native/exclusive_race.c": "3dd7655f53f5f09692aca05ed1fcf3aea68964befc76d1b0dde11cfc742ec3a4",
+    "tests/runtime/native/fault_inject.c": "e2221bbbef688f3ec34884b52c364fc73c37bdffa6562eaf55a29ca9788058c9",
+    "tests/runtime/negative/array_reuse.bend": "c3c955f67d6b0cf8d97ee237373f40fce3b4ed28ba058f72bdb27f14467d84e9",
+    "tests/runtime/negative/array_reuse_control.bend": "92a442c18df032b80f73d0b4ef2e88cd7b8ea3fefd7b33e13015c806bcf4ffa4",
+    "tests/runtime/negative/file_reuse.bend": "9d8c76e08697999bb3f1ff79e01a238a9efcca7b5ee8ad717c16316d5088d5dd",
+    "tests/runtime/negative/file_reuse_control.bend": "7852a941cf7784fc05ef13a93fefd3de0039812a7f35958125cc3004ff7abb74",
+    "tests/runtime/probes/Support.bend": "0d11534c3dee9c981b7b8c9ca98b4ffe10f5997884f19692528b1235089e2afb",
+    "tests/runtime/probes/affine_arrays.bend": "e0830237b29f1b7e5be2cacbed717c96b0f4a5893c7bf4f71d7a6b203c35e115",
+    "tests/runtime/probes/argv_exit.bend": "2fd705bcf68f2c1033451b033552de9987946ba5930a240331bdaaf76492ebf4",
+    "tests/runtime/probes/binary_roundtrip.bend": "ed14c19a28707943bbf006794d753476c012a7c41ff1880e4115784fa0176422",
+    "tests/runtime/probes/budget_work.bend": "17e9938f0d049b51fc76501d68c4edd3aa558fe2741558ad84bc323e2a74e0e9",
+    "tests/runtime/probes/charged_array.bend": "be63c17d8f86dbbb84fbfb997b5f1400e14d76bb7958ff18296803525f13002f",
+    "tests/runtime/probes/chunk_stream.bend": "2075e18a68fe8883f59598063af4049faeb751f56503ac8c4a679464a239c1b0",
+    "tests/runtime/probes/exclusive_create.bend": "bfcff7ad24c2262f871ca39ad48b4f72ddb5de7877dc2e51bf1a84b7cb98e0c0",
+    "tests/runtime/probes/io_errors.bend": "70fc133d5b32fa82330ba19de52b90c967063d79ec55ea186786030742d91b90",
+    "tests/runtime/probes/memory_pressure.bend": "03d2a295df4cf310c0e0957c7b091b65d9363d30670570799c156331232041c8",
+    "tests/runtime/probes/memory_shapes.bend": "6c46ef09bcdd1398a34d344ed1a33a8960b24f3db6ccd06eb167566b93013ce0",
+    "tests/runtime/probes/offsets.bend": "a24838890d6bea0f0afea501c1b4a3fd3f167acd735519176aac828b234fe2d6",
+    "tests/runtime/probes/range_guard.bend": "ec93d104d3bc2c325089114589b97ff101494ec7e7773d538eb103d3681db359",
+    "tests/runtime/probes/sha_primitives.bend": "589c007b61ebd15f75d84f54e0687da7745c4e7a1f0770a0b7c7e36409dd0946",
+    "tests/runtime/probes/short_io.bend": "2c870171b435bd2565e35c5b838c490031692cf94e926813ca1ae1e48f870074",
+    "sources.lock": "c693e483f90bd8fa08c41f47315f39c7e87c3567869a3940d26758647755b1da",
+    ".github/workflows/runtime-probes.yml": "b10e451c44b61a5dbdc02d5260f88dff7687ba2787af9151951bb027d09acef4"
+  },
+  "suites": [
+    {
+      "file": "suite-all.json",
+      "sha256": "5f65216c90995f361708bc0204926e25199c7a1cb5666624ffe115e2f06a1124",
+      "count": 93,
+      "cases": [
+        {
+          "case": "P01-raw-argv",
+          "result": "pass",
+          "observation_sha256": "53ef48d7ca055fc5528c0b2945864221b4f4df219bddc330f71107eb3eac8759",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P01-exit-0",
+          "result": "pass",
+          "observation_sha256": "e69ed450f0f09a502078d6b463034dc19f1c987e09b993ac3b84cc1130d09970",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P01-exit-2",
+          "result": "pass",
+          "observation_sha256": "00163ca0547441b62841ea03bd488e6d21c679e9d82e6d813ce6846d887d5c29",
+          "exit": 2,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P01-exit-3",
+          "result": "pass",
+          "observation_sha256": "4e7d0f4f6bb9e1e94bd10562dce2137f9bc5996c37694a0b0ff6eec4c44df75b",
+          "exit": 3,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P01-exit-4",
+          "result": "pass",
+          "observation_sha256": "2578202b174401932d0dadfa08eec0c84cb4868dfc0324bd8a0d228e9af66620",
+          "exit": 4,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P01-exit-5",
+          "result": "pass",
+          "observation_sha256": "f09b61442115ce7e8053998aadf34777c592a87eebaf56833daf269578167c62",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P01-exit-6",
+          "result": "pass",
+          "observation_sha256": "ffe9e0dccc56100d8ce3baec3e3f419259da31d0daf99d3681d7a311d6cd1bf6",
+          "exit": 6,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P01-exit-7",
+          "result": "pass",
+          "observation_sha256": "9c494bbcd9a5279f93e8300fce2c08dc7034aeebe3785f08547828d93c84a40e",
+          "exit": 7,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P01-die",
+          "result": "pass",
+          "observation_sha256": "4b63c6e7c2ce2a2f59190cc184fe03a14bbd07610242d54775d0e1b7634ce207",
+          "exit": 7,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P02-roundtrip-0",
+          "result": "pass",
+          "observation_sha256": "2fe8b4a4836c15b0d58f3bb8a84e6adaf0f481be8b2abaf88eb21f0d1aef4d62",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P08-chunk-0",
+          "result": "pass",
+          "observation_sha256": "12e31f23637c62bfd76241334bd6f415b1c41b506df38f27cd44fc6f5836c7b7",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P02-roundtrip-1",
+          "result": "pass",
+          "observation_sha256": "c1a09e2b6a1a89d12916ea49492139b7ac803a80617f669ae79c12c79ddda51b",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P08-chunk-1",
+          "result": "pass",
+          "observation_sha256": "b0b819db82f186139d932c0e27772d5517190a5fffcd6454d7bddb3b25145ab1",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P02-roundtrip-65535",
+          "result": "pass",
+          "observation_sha256": "8570502ebbb0196a0e556ce5e9060087660807e17c0d02aa7464864f3ed25ed9",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P02-roundtrip-65536",
+          "result": "pass",
+          "observation_sha256": "2f433cffd8a1576eaa1b8cecdde086447146eb7749bc894996d0397f19f9a761",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P08-chunk-65536",
+          "result": "pass",
+          "observation_sha256": "a3e49cba2f24afe991aeff636bf9889016e1822b6521f8d472d7e39cd843b93d",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P02-roundtrip-65537",
+          "result": "pass",
+          "observation_sha256": "6bb7f0fc2c41932a688ae8c2fa512a7e26b4a7afe518a4cf98c8d97168b474a4",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P08-chunk-65537",
+          "result": "pass",
+          "observation_sha256": "83aba62abce01b17b64067b38129b4b40ed742a29f4fd851b4f70174dedbabd9",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P02-roundtrip-131073",
+          "result": "pass",
+          "observation_sha256": "946c39c63ca918c09dfd1acd3e953a64ab751f085d2555f48472c95bea66d3cc",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P08-chunk-131073",
+          "result": "pass",
+          "observation_sha256": "22c6c25466a4b958f8855696699d14c409b5c44deb25d07f2d426626e4fa4fd7",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P04-exclusive-new",
+          "result": "pass",
+          "observation_sha256": "37d8875428aee7d1645f902ea3630de51142e6e5128a50569054b0304bbfb74b",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P04-concurrent-exclusive-create",
+          "result": "pass",
+          "observation_sha256": "1872a8be78568824847604c1f112cd23f1ff3b96d9d63ec39592b0e9ab9a6628",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P04-existing-file",
+          "result": "pass",
+          "observation_sha256": "72d4c0bd046a69315f6251d830f36b1bc8b611413bc0339ff291902e2c50ade7",
+          "exit": 17,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P04-existing-dir",
+          "result": "pass",
+          "observation_sha256": "6b4d9817c60cab1a7021be09c4ac746a71e0ae6f222e9af2cba085e67f45a898",
+          "exit": 17,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P04-symlink",
+          "result": "pass",
+          "observation_sha256": "28e1f120729e153ca5c58136ca14a6c0473ba36ab732e99ad26700270a268262",
+          "exit": 17,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P05-missing",
+          "result": "pass",
+          "observation_sha256": "48f8accbdfd53c10b2e5d14e228a0c7feea4c9009c788c7733957005a4b6a721",
+          "exit": 2,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P05-denied",
+          "result": "pass",
+          "observation_sha256": "f34fc0d8dc503b04de21069ea3e8b303c3de5518eb56e3968f7732acbfac08d0",
+          "exit": 13,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P05-mode",
+          "result": "pass",
+          "observation_sha256": "0fe1fcad2837a08c9f91ca29a9683d75afcf7e4f4e9ce458353684480a2ba529",
+          "exit": 22,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P05-invalid-byte",
+          "result": "pass",
+          "observation_sha256": "65f82fb132bb8244d37b340754a225aeaee88b7023faafba75c45dfd3e17701b",
+          "exit": 22,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P05-readonly",
+          "result": "pass",
+          "observation_sha256": "b7e7d9ce83fff8c5ed2d8ff31b2ba6b3cd1b8f1371f6ac953861b8f2dd16422f",
+          "exit": 9,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P05-full",
+          "result": "pass",
+          "observation_sha256": "43ed5b88c6ab766cb8b48d96612da46e4bc2d8bb6ba0fd80269edb5efde65e33",
+          "exit": 28,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-position",
+          "result": "pass",
+          "observation_sha256": "6ae4a0c54e8df4ebc8d521956dfe90bed436cb4fd4a953cd7e240d45c6791372",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-u32-max-size",
+          "result": "pass",
+          "observation_sha256": "b71c00c15e3767e75a6db14c7ef4067e6a58a0080bf319f7cbf3ae4e7c4d3f43",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-u32-last-byte",
+          "result": "pass",
+          "observation_sha256": "9a9c7acf9c57d2e1eb61d63ff15ee20a5c91ef299e7b9caf288328a0279331c8",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-over-u32-size",
+          "result": "pass",
+          "observation_sha256": "f9265b4ad86ce5a8b2c6f7cb957bdc376ba3c6104a7b84771cdb77149827ccf4",
+          "exit": 75,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-P07-guard-0",
+          "result": "pass",
+          "observation_sha256": "eba18465fcd3f8d0ca076321bf3faf2910df19afdc7e289a708f6001a1bb12c6",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-P07-guard-1",
+          "result": "pass",
+          "observation_sha256": "298752cc25ebb92f80d3182e077f8c8c8ba7d168d601bdde599e1a9b13d0c32a",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-P07-guard-2",
+          "result": "pass",
+          "observation_sha256": "c892c73b2fa2af609e2df626d766f10a41230c3100eff6d4c6fd33991ed0ecc5",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-P07-guard-3",
+          "result": "pass",
+          "observation_sha256": "355003ad66ee73ba18340cc64e3ecb9e9d35a755eba69a8088d64cd33b46a1ff",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-P07-guard-4",
+          "result": "pass",
+          "observation_sha256": "bc72581c81fab1e577aad78f5024d841e2112038cfedf87fd8311231f81a5ecd",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-P07-guard-5",
+          "result": "pass",
+          "observation_sha256": "ba467ea8e63b2f3556868f5eb7ab174845357b19ce63f90296fd9394ba9afb91",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-P07-guard-6",
+          "result": "pass",
+          "observation_sha256": "8813301c0a185750305ee3857493a53b8529f285ef50111cc523ad98ee2d46d8",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-P07-guard-7",
+          "result": "pass",
+          "observation_sha256": "04230b41f177144436c113d5b47c3cda597a1caddba5e71284b6c178a4a23c26",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-P07-guard-8",
+          "result": "pass",
+          "observation_sha256": "300c02e36a237f00d67239bbc4b3fbbc439fb0c87e1837f1a1c9ee69d9838ed2",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-P07-guard-9",
+          "result": "pass",
+          "observation_sha256": "5413864de5471fda9db86ef692fa3a32f7cad28b63198ce0c59bed99d6c098b3",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P03-P07-guard-10",
+          "result": "pass",
+          "observation_sha256": "018c9a1edefd3e1d66bf6b2f104224297b325d3a1b94a29314f43e88d92ff44f",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P07-affine-array",
+          "result": "pass",
+          "observation_sha256": "ba3be650b5e0c4d5ce648cc2d6bc06ab524d3c8eaf9491c4aa745d25a2275e8e",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P09-sha-primitives-0",
+          "result": "pass",
+          "observation_sha256": "207f964644594f6de76fbf7aca9fe441840c266f202ee1d3cc288ced6743e12e",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P09-sha-primitives-1",
+          "result": "pass",
+          "observation_sha256": "efab0d77f4bcc6dd5b7233d4d03816679069898a6d6ab0ef4dc6780dcdd9b0a9",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P09-sha-primitives-2",
+          "result": "pass",
+          "observation_sha256": "55a90b686288f6ab09450376c9a42773a95f87798670568cc8f441a2556e4553",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P09-sha-primitives-3",
+          "result": "pass",
+          "observation_sha256": "aa454433dfd027ee519278ec43e327e8542f1ed5d7fa2e8930fea3cef42b4ec2",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P09-sha-primitives-4",
+          "result": "pass",
+          "observation_sha256": "c329981f2a561d8a0df07ffc67302455cd7c524758c80847b3137c384de3807f",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P09-sha-primitives-5",
+          "result": "pass",
+          "observation_sha256": "4397adca185a9d8fd3b6e8764fcd4cf18721c8e5c43f548cbe58a6c5ffbf1e6b",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P09-sha-primitives-6",
+          "result": "pass",
+          "observation_sha256": "53157fddc1d590385d291149bf1019028a8d1f59cca494ade2fae8a4ddd8cd98",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P09-sha-primitives-7",
+          "result": "pass",
+          "observation_sha256": "f7930e324ea14c0fa015aa82109765d1150a9d9953b61ec243f713374ed28a67",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P09-sha-primitives-8",
+          "result": "pass",
+          "observation_sha256": "41ae3c6cfa796f60a6a1e73f62b9babd5a70cac0bdb0cb465974463fa881a728",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P09-sha-primitives-9",
+          "result": "pass",
+          "observation_sha256": "b519ad67ca302c8bf5aa01f8a47b85f72f764a2911c137e21a5011ca21710b54",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P09-sha-primitives-10",
+          "result": "pass",
+          "observation_sha256": "0f3cc61c246b1b9a2f892304ca396d6ddbf9f744016a87c242d543b095626f8d",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P09-sha-primitives-11",
+          "result": "pass",
+          "observation_sha256": "ede9bae5fb175741bbf720326869c771eeeffcf81667191b54d6147a9472b2bb",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-read-short-1",
+          "result": "pass",
+          "observation_sha256": "d8544202ac323a20d55802ddd31ffbc92464f2c002c06920a6d68f42624b0248",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-read-short-7",
+          "result": "pass",
+          "observation_sha256": "83f944999b63c4e98b7c3be16166be266221b55c71f340a8074699062a59b465",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-read-short-4095",
+          "result": "pass",
+          "observation_sha256": "a4186bb17b75c9545cdb860e3de6173afc46eec51e1bd7a055ce5d2aaf6adaad",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-read-eintr",
+          "result": "pass",
+          "observation_sha256": "c8abc3b06f47d26f44f5ff9518ead16a31fb4cae82a379c17238d4aebdce42a9",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-read-error",
+          "result": "pass",
+          "observation_sha256": "75399e73536acce465a1c6411ccf836816c01a4c477eddb84d67b914059ed05d",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-read-partial-error",
+          "result": "pass",
+          "observation_sha256": "4bc26fd646956989e570b3f4559e40fae7e3419a8afb2792579883ecc08b41b3",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "verified_gap": "partial-read-error-is-not-propagated"
+        },
+        {
+          "case": "P06-read-zero",
+          "result": "pass",
+          "observation_sha256": "e667c493abf011e20542ca791466b09288b583a422e47d929183f326c1eed056",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pread-short-1",
+          "result": "pass",
+          "observation_sha256": "c5e3a3dfaeb93becd9c985f600ffd0453022a441e402a3d60f0ef6e4d4254334",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pread-short-7",
+          "result": "pass",
+          "observation_sha256": "69cad7d638bc807d758d0d2b1b24703680afa2dd86e1b873e7a36e902d551777",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pread-short-4095",
+          "result": "pass",
+          "observation_sha256": "648e7f3aa4ba315234a3437262b701d4fceb133ecec9741a03d15fc748331455",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pread-eintr",
+          "result": "pass",
+          "observation_sha256": "5d63bbcb33fa389954bf2ae4578cc2075e1f3d17b45a1404a28307504f1777ae",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pread-error",
+          "result": "pass",
+          "observation_sha256": "7dc0b897f9a7cbb8c3700f13d450cc626bdd2d49b498223ae26912466a885b62",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pread-partial-error",
+          "result": "pass",
+          "observation_sha256": "e3b6aa3ac6055e2bb787229cdb57043ad19568fd8004b6f4c2308c195355d67f",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "verified_gap": "partial-read-error-is-not-propagated"
+        },
+        {
+          "case": "P06-pread-zero",
+          "result": "pass",
+          "observation_sha256": "6c8fee40a46a48eb5f60127573611f4355dfdd9402353410f283f9fb807a5840",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-write-short-1",
+          "result": "pass",
+          "observation_sha256": "6f97288e891b1f5559b94709d2aa73cba014cf9e1ab21f690ed31faba7363b77",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-write-short-7",
+          "result": "pass",
+          "observation_sha256": "fdbc4f7424fb0e7650d0a7af9c6b139667739566df3f9cb3d03a989d19be230d",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-write-short-4095",
+          "result": "pass",
+          "observation_sha256": "3e0c3a8ad051c1bde7df1b89f78e6927df9e21560f5f8fdbc65e2654ff9bdd87",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-write-eintr",
+          "result": "pass",
+          "observation_sha256": "c0e547ee9e598d3f84849ad8797d43f7d5ed3a667d779ae55d020fc3c37b7e0b",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-write-error",
+          "result": "pass",
+          "observation_sha256": "4c7a73cfb413b13ff4144ec27aa46dc6d7558a832b2733647125cf2e0f89866d",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-write-partial-error",
+          "result": "pass",
+          "observation_sha256": "53d10f01f5c6d33e28a999b877c90eb4091c1940705830ae3b47ba83501046e9",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-write-zero",
+          "result": "pass",
+          "observation_sha256": "6da147383dd2bf17f33ebe8827bf9592281abc6070fbfe60bfbf5c448e852657",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-write-enospc",
+          "result": "pass",
+          "observation_sha256": "1652e0560d4356a2fed12660244eaa9beeaaf1cbd0123ed78bbe1f5c97b3d790",
+          "exit": 28,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pwrite-short-1",
+          "result": "pass",
+          "observation_sha256": "99ed657d780774479823a37f1fda0f872515f066163f411010650c8a778b8322",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pwrite-short-7",
+          "result": "pass",
+          "observation_sha256": "19181c131d47cfc9fa1d5928bb2de13adfd853a2d1edbb6d0efc2fe0d11ed6d2",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pwrite-short-4095",
+          "result": "pass",
+          "observation_sha256": "39099c2ed4ce69d6683f659230b8ad83fe9daf4ebaae35f53704e2775bb7b693",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pwrite-eintr",
+          "result": "pass",
+          "observation_sha256": "4d4996a0df537014ff1c64257a3364f13868ff642a54e7022527857591c40a26",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pwrite-error",
+          "result": "pass",
+          "observation_sha256": "0ac8238355a471bc86ab6ceca16bdb8e0559264e6e6a8a0f3c36110435323b39",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pwrite-partial-error",
+          "result": "pass",
+          "observation_sha256": "9833dd7afecb0e9331a10dc21fc703e327e026457e9a2296253bc5cc30742ba2",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pwrite-zero",
+          "result": "pass",
+          "observation_sha256": "c0400cea662349dc37c33cfa2e1474d6edcc6e109f59ef216b47f06fa23cf94c",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-pwrite-enospc",
+          "result": "pass",
+          "observation_sha256": "10e3126455f99a1e5099b2d5dbdc3d7193eae9110c48608b8d7f16832c3aea2a",
+          "exit": 28,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-transient-error-followed-by-success",
+          "result": "pass",
+          "observation_sha256": "dbd964d0721d4c51edb79cc9cbb4363037ef553d7fe41f48988fff774fd2c917",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "verified_gap": "transient-read-error-lost-even-when-final-bytes-complete"
+        },
+        {
+          "case": "P06-realloc-failure",
+          "result": "pass",
+          "observation_sha256": "d7ce1f46e5cec405d4a4788a0a96960d5e585410bb84f939339a2cac3215782e",
+          "exit": 1,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        },
+        {
+          "case": "P06-close-error",
+          "result": "pass",
+          "observation_sha256": "dfeec278e57eb9ad026f3ba8a184a6d6f713cd1f3c243c9f88a0b2607f0129db",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "verified_gap": "checked-close-unavailable"
+        },
+        {
+          "case": "P06-malloc-failure",
+          "result": "pass",
+          "observation_sha256": "9f7def8c42a0227ff87d5c3db5bb67e9c7dca5dcab4563444945560b9f18f269",
+          "exit": 1,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          }
+        }
+      ]
+    },
+    {
+      "file": "measure-all.json",
+      "sha256": "85bfe2b010bbce914d0a5c410f674c7d565b9c3e8b06908908920efcf96284c4",
+      "count": 98,
+      "cases": [
+        {
+          "case": "P10-selftest",
+          "result": "pass",
+          "observation_sha256": "89ad937ad2b226fb7ceaf9badb9d6a3f4de62e144b9b91c15267aa4059ad6492",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 13209600
+          }
+        },
+        {
+          "case": "P10-reserve",
+          "result": "pass",
+          "observation_sha256": "5fa5f734547b2d56240e9f2043dc5c8d650702c2332918012b57d2dd190d03a6",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 12951552
+          }
+        },
+        {
+          "case": "P10-over",
+          "result": "pass",
+          "observation_sha256": "edfe3dc8016ec220545f3343d6a24935e1e0c3556088df9af391934842159115",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 13152256
+          }
+        },
+        {
+          "case": "P10-multiply-wrap",
+          "result": "pass",
+          "observation_sha256": "a2d595dccab9e9f1ab57a9d4c61682fa5fff2a23427169a25b6a5abd26108e5b",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 12963840
+          }
+        },
+        {
+          "case": "P10-release-underflow",
+          "result": "pass",
+          "observation_sha256": "8f05f720a0ac373b986238c89b41a6105e2bb4c654ae0eedfaacfd2b68d2ef41",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 12926976
+          }
+        },
+        {
+          "case": "P10-allocation",
+          "result": "pass",
+          "observation_sha256": "768612360d8e49c1ae451ff26c23ace0dfe0892673c83b15152171f495fa5346",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 13082624
+          }
+        },
+        {
+          "case": "P10-allocation-reject",
+          "result": "pass",
+          "observation_sha256": "21c946fc955fb03533302e15a7719288cc922ade599cfee744a74650e10653ee",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 13373440
+          }
+        },
+        {
+          "case": "P10-work",
+          "result": "pass",
+          "observation_sha256": "23115b717f76478a86b46bcd67f507e3d64c3f2cc497d0f0c7ec556bba5d700c",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 13086720
+          }
+        },
+        {
+          "case": "P10-work-exhausted",
+          "result": "pass",
+          "observation_sha256": "517033a29320e7c99ac6ed590b3a7dba6d01bd7436265e5383bb6cb733a186ea",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 12972032
+          }
+        },
+        {
+          "case": "P10-work-many",
+          "result": "pass",
+          "observation_sha256": "319d35feb0560aa200b58c166c1821be9498920f2d62d3c3f2cefeeb42b1bc96",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 12931072
+          }
+        },
+        {
+          "case": "P10-work-many-exhausted",
+          "result": "pass",
+          "observation_sha256": "82730316fb0d021943c3209ff41d1ab82f8b0a2b413608f4aa97c627973f3a4c",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 12947456
+          }
+        },
+        {
+          "case": "M-shape-0-8-0",
+          "result": "pass",
+          "observation_sha256": "b9daf14122acdca58680fe23390731784b6d33b7c5adc9688d1723567cb1f3cf",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2596864,
+            "VmHWM_bytes": 2596864,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7413760,
+            "memory_peak": 8400896,
+            "ru_maxrss_bytes": 12677120
+          }
+        },
+        {
+          "case": "M-shape-0-8-1",
+          "result": "pass",
+          "observation_sha256": "b7c1e5488e9246bd28dafec8bb3e352092ddb7837042f35661e112006e37bf2c",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2531328,
+            "VmHWM_bytes": 2531328,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7438336,
+            "memory_peak": 8429568,
+            "ru_maxrss_bytes": 12738560
+          }
+        },
+        {
+          "case": "M-shape-0-8-2",
+          "result": "pass",
+          "observation_sha256": "931128e65ca1f447f81f60877c442d111d7269aee0b2dc729c52f848e868d14e",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2596864,
+            "VmHWM_bytes": 2596864,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7245824,
+            "memory_peak": 7946240,
+            "ru_maxrss_bytes": 13262848
+          }
+        },
+        {
+          "case": "M-shape-1-8-0",
+          "result": "pass",
+          "observation_sha256": "f05f4801afc182ffec75ce8fbf068a1af7e8566a818e431e9998a546a4ff8688",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2625536,
+            "VmHWM_bytes": 2625536,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7172096,
+            "memory_peak": 8183808,
+            "ru_maxrss_bytes": 13303808
+          }
+        },
+        {
+          "case": "M-shape-1-8-1",
+          "result": "pass",
+          "observation_sha256": "e5324ea12f64febbb97638aaaf2edb6793f066dafd5d94b436a53d809f2ed5fd",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2674688,
+            "VmHWM_bytes": 2674688,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7471104,
+            "memory_peak": 8462336,
+            "ru_maxrss_bytes": 13307904
+          }
+        },
+        {
+          "case": "M-shape-1-8-2",
+          "result": "pass",
+          "observation_sha256": "16c2c0cb3f4dc740a38c249a9b407c8bd0f25957d9b4fe50599221164df35eb1",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2686976,
+            "VmHWM_bytes": 2686976,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7843840,
+            "memory_peak": 8585216,
+            "ru_maxrss_bytes": 13131776
+          }
+        },
+        {
+          "case": "M-shape-1-16-0",
+          "result": "pass",
+          "observation_sha256": "048aaeacbc69b44a76731582f037470ae9cb70bd3e28c3fe4a9c258b2e989571",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2899968,
+            "VmHWM_bytes": 2899968,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7393280,
+            "memory_peak": 8130560,
+            "ru_maxrss_bytes": 12668928
+          }
+        },
+        {
+          "case": "M-shape-1-16-1",
+          "result": "pass",
+          "observation_sha256": "518b14fa48cbcfa8029f0b02cadee8edca7826f5348b034a3c0755b4c6a5ec31",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2920448,
+            "VmHWM_bytes": 2920448,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7827456,
+            "memory_peak": 8556544,
+            "ru_maxrss_bytes": 13201408
+          }
+        },
+        {
+          "case": "M-shape-1-16-2",
+          "result": "pass",
+          "observation_sha256": "18fba391f289108cffb322843cea8f3a0cd48023e117e8e9b17425c8b7c668e1",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2912256,
+            "VmHWM_bytes": 2912256,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7458816,
+            "memory_peak": 8208384,
+            "ru_maxrss_bytes": 13225984
+          }
+        },
+        {
+          "case": "M-shape-1-20-0",
+          "result": "pass",
+          "observation_sha256": "98223f3ac30d2581185f94d8c271492d4e295af0161558523d90116f9faddecd",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 6660096,
+            "VmHWM_bytes": 6660096,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 11145216,
+            "memory_peak": 11145216,
+            "ru_maxrss_bytes": 12939264
+          }
+        },
+        {
+          "case": "M-shape-1-20-1",
+          "result": "pass",
+          "observation_sha256": "56b457767a8cd8a68ff920c6ba538f6ff5761e4435ba99b608fa0c6a17534482",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 6791168,
+            "VmHWM_bytes": 6791168,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 11382784,
+            "memory_peak": 11382784,
+            "ru_maxrss_bytes": 13389824
+          }
+        },
+        {
+          "case": "M-shape-1-20-2",
+          "result": "pass",
+          "observation_sha256": "8ed554050d37f6ee4a66f88431e2c7732ee9d69f8f4fecc20056f97a34c66db0",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 6660096,
+            "VmHWM_bytes": 6660096,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 11333632,
+            "memory_peak": 11333632,
+            "ru_maxrss_bytes": 13111296
+          }
+        },
+        {
+          "case": "M-shape-2-8-0",
+          "result": "pass",
+          "observation_sha256": "55eca348056c53771bdd5da04a084139601a48d098d1aea7b67b99f9c9550e99",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2527232,
+            "VmHWM_bytes": 2527232,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7229440,
+            "memory_peak": 8224768,
+            "ru_maxrss_bytes": 13295616
+          }
+        },
+        {
+          "case": "M-shape-2-8-1",
+          "result": "pass",
+          "observation_sha256": "0d5710f9bcf13939e0c3ba3fa0e03804564f850f399ab39c161eff99000b6c7e",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2547712,
+            "VmHWM_bytes": 2547712,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7331840,
+            "memory_peak": 8294400,
+            "ru_maxrss_bytes": 12926976
+          }
+        },
+        {
+          "case": "M-shape-2-8-2",
+          "result": "pass",
+          "observation_sha256": "df516b315f4724fddc2d87cbe5606c8392a4cc01db7e124e5605ded98f4a6ffc",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2543616,
+            "VmHWM_bytes": 2543616,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7553024,
+            "memory_peak": 8556544,
+            "ru_maxrss_bytes": 13152256
+          }
+        },
+        {
+          "case": "M-shape-2-16-0",
+          "result": "pass",
+          "observation_sha256": "e78f3fa651d06f4ada0345dcb9f779faed2b01b73c8d596fddd1de3795781e72",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 3579904,
+            "VmHWM_bytes": 3579904,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 8306688,
+            "memory_peak": 8306688,
+            "ru_maxrss_bytes": 13209600
+          }
+        },
+        {
+          "case": "M-shape-2-16-1",
+          "result": "pass",
+          "observation_sha256": "dc55ba606410f0b395e6c2010e5001ed97fae42b70d1c320db70502bb2cf2d78",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 3706880,
+            "VmHWM_bytes": 3706880,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 8683520,
+            "memory_peak": 8683520,
+            "ru_maxrss_bytes": 12943360
+          }
+        },
+        {
+          "case": "M-shape-2-16-2",
+          "result": "pass",
+          "observation_sha256": "1e7656c6a3d5eba026d4ecfc0deefb129c5951bbaff076e5e41e5950fbbe964d",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 3579904,
+            "VmHWM_bytes": 3579904,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 8335360,
+            "memory_peak": 8339456,
+            "ru_maxrss_bytes": 12943360
+          }
+        },
+        {
+          "case": "M-shape-2-20-0",
+          "result": "pass",
+          "observation_sha256": "eecc140b1061e71a496a4dfa4dd9591add2a641a2b1fd32d4caff7bf814f96c0",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 19292160,
+            "VmHWM_bytes": 19292160,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 24260608,
+            "memory_peak": 24260608,
+            "ru_maxrss_bytes": 19283968
+          }
+        },
+        {
+          "case": "M-shape-2-20-1",
+          "result": "pass",
+          "observation_sha256": "e335dfd959b9d08989fac6ec64307fcebfb366d0598a920f9f1ad04e1d37e783",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 19439616,
+            "VmHWM_bytes": 19439616,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 23965696,
+            "memory_peak": 23965696,
+            "ru_maxrss_bytes": 19423232
+          }
+        },
+        {
+          "case": "M-shape-2-20-2",
+          "result": "pass",
+          "observation_sha256": "5c1cb0b1e45686fe3e4571e3fbe1369ce86a46afad591c09ec6eb918ef9bef1d",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 19263488,
+            "VmHWM_bytes": 19263488,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 24158208,
+            "memory_peak": 24158208,
+            "ru_maxrss_bytes": 19247104
+          }
+        },
+        {
+          "case": "M-shape-3-8-0",
+          "result": "pass",
+          "observation_sha256": "de76ae0907a4ceff2f867e7762befbbb60a00047589c1973bf7a07a5c36b6629",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2654208,
+            "VmHWM_bytes": 2654208,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7397376,
+            "memory_peak": 8384512,
+            "ru_maxrss_bytes": 13074432
+          }
+        },
+        {
+          "case": "M-shape-3-8-1",
+          "result": "pass",
+          "observation_sha256": "af18f5d146512f63e1af30318160cd59843458f4736edfcb9edc2a691943545b",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2715648,
+            "VmHWM_bytes": 2715648,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7204864,
+            "memory_peak": 8171520,
+            "ru_maxrss_bytes": 12963840
+          }
+        },
+        {
+          "case": "M-shape-3-8-2",
+          "result": "pass",
+          "observation_sha256": "dfbe505f46b83b347eb43a653c27b1417c64027917a0b3cc1e1adb3487127da1",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2482176,
+            "VmHWM_bytes": 2482176,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7217152,
+            "memory_peak": 8208384,
+            "ru_maxrss_bytes": 13336576
+          }
+        },
+        {
+          "case": "M-shape-3-16-0",
+          "result": "pass",
+          "observation_sha256": "272711f1da619a68a4a3f96e39d7d845bc96aa6208a1275bcd0704d0dca7f1c9",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 3624960,
+            "VmHWM_bytes": 3624960,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 8273920,
+            "memory_peak": 8273920,
+            "ru_maxrss_bytes": 12890112
+          }
+        },
+        {
+          "case": "M-shape-3-16-1",
+          "result": "pass",
+          "observation_sha256": "15cbd3459003fe3a761f5a5b2118e50d28da37f4d225641d6419ba3c44744b74",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 3624960,
+            "VmHWM_bytes": 3624960,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 8044544,
+            "memory_peak": 8044544,
+            "ru_maxrss_bytes": 12656640
+          }
+        },
+        {
+          "case": "M-shape-3-16-2",
+          "result": "pass",
+          "observation_sha256": "283d566a10bc3162b53d78eb563a7e6d97ecc79151eb686a9d26a4677d36c5ca",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 3678208,
+            "VmHWM_bytes": 3678208,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 8114176,
+            "memory_peak": 8114176,
+            "ru_maxrss_bytes": 13361152
+          }
+        },
+        {
+          "case": "M-shape-3-20-0",
+          "result": "pass",
+          "observation_sha256": "a9088705faadf01d3bc627f6770bddb46176507190a85eac4baf01759170cafb",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 19378176,
+            "VmHWM_bytes": 19378176,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 23982080,
+            "memory_peak": 23982080,
+            "ru_maxrss_bytes": 19374080
+          }
+        },
+        {
+          "case": "M-shape-3-20-1",
+          "result": "pass",
+          "observation_sha256": "e54daa031779563a6d216dafb7bf7c65cbcba116ed21a65233b48b880ef83ba5",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 19247104,
+            "VmHWM_bytes": 19247104,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 23613440,
+            "memory_peak": 23613440,
+            "ru_maxrss_bytes": 19120128
+          }
+        },
+        {
+          "case": "M-shape-3-20-2",
+          "result": "pass",
+          "observation_sha256": "9b9f3e8d77b41d1ec333a99cc4453811247468c2712e1d58c4fccc08fc3ccda5",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 19423232,
+            "VmHWM_bytes": 19423232,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 23994368,
+            "memory_peak": 23994368,
+            "ru_maxrss_bytes": 19406848
+          }
+        },
+        {
+          "case": "M-shape-4-8-0",
+          "result": "pass",
+          "observation_sha256": "92feecc1cf4f62fc6df56aef408ea07d65e1b4cb9c17fd8d88ce55f7dc8df616",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2617344,
+            "VmHWM_bytes": 2617344,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7159808,
+            "memory_peak": 8151040,
+            "ru_maxrss_bytes": 13197312
+          }
+        },
+        {
+          "case": "M-shape-4-8-1",
+          "result": "pass",
+          "observation_sha256": "3e7f29b4acb443d42e7eaa426d138ffad273befb79b2d53e5c96ff33285bf563",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2596864,
+            "VmHWM_bytes": 2596864,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7176192,
+            "memory_peak": 8183808,
+            "ru_maxrss_bytes": 13402112
+          }
+        },
+        {
+          "case": "M-shape-4-8-2",
+          "result": "pass",
+          "observation_sha256": "01840f3542a071842c6066c805d1ff474711e427e36183402269898cc5c6873d",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2654208,
+            "VmHWM_bytes": 2654208,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7122944,
+            "memory_peak": 8118272,
+            "ru_maxrss_bytes": 13148160
+          }
+        },
+        {
+          "case": "M-shape-4-16-0",
+          "result": "pass",
+          "observation_sha256": "e840bead532759e5086a702f74038de922a9e8dcd7675c3f0ec7833e21d80b40",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5214208,
+            "VmHWM_bytes": 5214208,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 9908224,
+            "memory_peak": 9908224,
+            "ru_maxrss_bytes": 13012992
+          }
+        },
+        {
+          "case": "M-shape-4-16-1",
+          "result": "pass",
+          "observation_sha256": "d1858c3279c072c91e8dde60a4c6553b26abea39935b6e53752d1d5175c137a7",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5214208,
+            "VmHWM_bytes": 5214208,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 10108928,
+            "memory_peak": 10108928,
+            "ru_maxrss_bytes": 13373440
+          }
+        },
+        {
+          "case": "M-shape-4-16-2",
+          "result": "pass",
+          "observation_sha256": "4fd6d69cc971641745b9c6d259ef35958e07c6be7513e764655a0d5b2adebb97",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5234688,
+            "VmHWM_bytes": 5234688,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 10170368,
+            "memory_peak": 10170368,
+            "ru_maxrss_bytes": 12898304
+          }
+        },
+        {
+          "case": "M-shape-4-20-0",
+          "result": "pass",
+          "observation_sha256": "a60b4e2a89026e1c1e950cdb7e8bc801aa8a8c2275637fe88f67e7e445dc870b",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 44544000,
+            "VmHWM_bytes": 44544000,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 49147904,
+            "memory_peak": 49147904,
+            "ru_maxrss_bytes": 44527616
+          }
+        },
+        {
+          "case": "M-shape-4-20-1",
+          "result": "pass",
+          "observation_sha256": "40ca8624809433b1652e2f693cb2e30b3ae63d8deb64442c057a85218ca90288",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 44523520,
+            "VmHWM_bytes": 44523520,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 49152000,
+            "memory_peak": 49152000,
+            "ru_maxrss_bytes": 44396544
+          }
+        },
+        {
+          "case": "M-shape-4-20-2",
+          "result": "pass",
+          "observation_sha256": "21438a52bfa539d95de028dc7f0fc60c4e32eb33d59ffd3dfd9012d250b967be",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 44584960,
+            "VmHWM_bytes": 44584960,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 49336320,
+            "memory_peak": 49336320,
+            "ru_maxrss_bytes": 44564480
+          }
+        },
+        {
+          "case": "M-shape-5-8-0",
+          "result": "pass",
+          "observation_sha256": "252ccd25c5709ff6100eac92655ae8e3e730dde4e866cc15fdb328fa4458fe65",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2662400,
+            "VmHWM_bytes": 2662400,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 6934528,
+            "memory_peak": 7933952,
+            "ru_maxrss_bytes": 13398016
+          }
+        },
+        {
+          "case": "M-shape-5-8-1",
+          "result": "pass",
+          "observation_sha256": "8a4f4b3a1ca6992248526de21a75eb5b67f8b3130455cdf47521962a41043a97",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2662400,
+            "VmHWM_bytes": 2662400,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7180288,
+            "memory_peak": 8179712,
+            "ru_maxrss_bytes": 13012992
+          }
+        },
+        {
+          "case": "M-shape-5-8-2",
+          "result": "pass",
+          "observation_sha256": "5455ff42bcae756a74f9f0fa5d66737dfc38414e03cf58e6434965861f0aded4",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2596864,
+            "VmHWM_bytes": 2596864,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7208960,
+            "memory_peak": 8204288,
+            "ru_maxrss_bytes": 13070336
+          }
+        },
+        {
+          "case": "M-shape-5-16-0",
+          "result": "pass",
+          "observation_sha256": "5086b0e5fe597cc1654cd900fb3f4fea1d04857d693c146a7d92b5ddab930bc1",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5287936,
+            "VmHWM_bytes": 5287936,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 10113024,
+            "memory_peak": 10113024,
+            "ru_maxrss_bytes": 13451264
+          }
+        },
+        {
+          "case": "M-shape-5-16-1",
+          "result": "pass",
+          "observation_sha256": "52a55d9cd1d644d4aeb3668983ccebe710bd64c536bd5e802886d593444fa262",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5197824,
+            "VmHWM_bytes": 5197824,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 10182656,
+            "memory_peak": 10182656,
+            "ru_maxrss_bytes": 13217792
+          }
+        },
+        {
+          "case": "M-shape-5-16-2",
+          "result": "pass",
+          "observation_sha256": "64e4605222c8b88cf5da95b02bc006c16357413bc12cffbddddf8525cbf2b2ec",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5156864,
+            "VmHWM_bytes": 5156864,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 10096640,
+            "memory_peak": 10096640,
+            "ru_maxrss_bytes": 13217792
+          }
+        },
+        {
+          "case": "M-shape-5-20-0",
+          "result": "pass",
+          "observation_sha256": "e7df3cf27aa54c8a4221d2748c0ea176e63074a1efcbd7592f9d6619db461f0a",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 44666880,
+            "VmHWM_bytes": 44666880,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 49168384,
+            "memory_peak": 49168384,
+            "ru_maxrss_bytes": 44650496
+          }
+        },
+        {
+          "case": "M-shape-5-20-1",
+          "result": "pass",
+          "observation_sha256": "9481b649183d8decf71e5b2c8530868d00e03215ff7f043e62f7fc9d2dfa29ce",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 44425216,
+            "VmHWM_bytes": 44425216,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 49520640,
+            "memory_peak": 49520640,
+            "ru_maxrss_bytes": 44404736
+          }
+        },
+        {
+          "case": "M-shape-5-20-2",
+          "result": "pass",
+          "observation_sha256": "74ce60546bdb9c3645ec2a214ce40ad3fe2210aef9f735a14bc80f5b0b423924",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 44421120,
+            "VmHWM_bytes": 44421120,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 49102848,
+            "memory_peak": 49102848,
+            "ru_maxrss_bytes": 44527616
+          }
+        },
+        {
+          "case": "M-shape-6-8-0",
+          "result": "pass",
+          "observation_sha256": "af8fb9ce94bf982ee454f985c93d74e4919cf60353d56d006b4417f337e8989b",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2650112,
+            "VmHWM_bytes": 2650112,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7217152,
+            "memory_peak": 8232960,
+            "ru_maxrss_bytes": 13393920
+          }
+        },
+        {
+          "case": "M-shape-6-8-1",
+          "result": "pass",
+          "observation_sha256": "8a00c094f12675eb5d89a1f3d484349fbd9d292d18ef587bc9c30367efe3c449",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2592768,
+            "VmHWM_bytes": 2592768,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7290880,
+            "memory_peak": 8261632,
+            "ru_maxrss_bytes": 12955648
+          }
+        },
+        {
+          "case": "M-shape-6-8-2",
+          "result": "pass",
+          "observation_sha256": "64d1252d9578304ddaaef02d0156e0ed91cf0da633fdf1f6204cb7e5dba1f281",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2596864,
+            "VmHWM_bytes": 2596864,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7417856,
+            "memory_peak": 8155136,
+            "ru_maxrss_bytes": 13099008
+          }
+        },
+        {
+          "case": "M-shape-6-16-0",
+          "result": "pass",
+          "observation_sha256": "d3d72f39102bf89183afb9fe7ab7aa64637865d5e18d2b5e5e24067c88cef884",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5287936,
+            "VmHWM_bytes": 5287936,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 10121216,
+            "memory_peak": 10121216,
+            "ru_maxrss_bytes": 13410304
+          }
+        },
+        {
+          "case": "M-shape-6-16-1",
+          "result": "pass",
+          "observation_sha256": "0ac1fe1b191c683da2bc4523ce75c159416a63c401ff717936ba1112aec739ee",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5156864,
+            "VmHWM_bytes": 5156864,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 9695232,
+            "memory_peak": 9695232,
+            "ru_maxrss_bytes": 12992512
+          }
+        },
+        {
+          "case": "M-shape-6-16-2",
+          "result": "pass",
+          "observation_sha256": "32ab92da2c942818000aae190baee81966dacf3bd8eacc53a1af82bf4a9980da",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5222400,
+            "VmHWM_bytes": 5222400,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 10121216,
+            "memory_peak": 10121216,
+            "ru_maxrss_bytes": 12988416
+          }
+        },
+        {
+          "case": "M-shape-6-20-0",
+          "result": "pass",
+          "observation_sha256": "7e8bda5cd5b0b491a5cabb3765a1d35bcf6276b1a273876377c74745d542fe99",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 44531712,
+            "VmHWM_bytes": 44531712,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 49418240,
+            "memory_peak": 49418240,
+            "ru_maxrss_bytes": 44462080
+          }
+        },
+        {
+          "case": "M-shape-6-20-1",
+          "result": "pass",
+          "observation_sha256": "bd3581a571c13dc84b5db31053c67f24fde42945d28a83422f39ee97a94470b8",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 44597248,
+            "VmHWM_bytes": 44597248,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 49233920,
+            "memory_peak": 49233920,
+            "ru_maxrss_bytes": 44281856
+          }
+        },
+        {
+          "case": "M-shape-6-20-2",
+          "result": "pass",
+          "observation_sha256": "0cafb27eefa001f2d03974cc388e73b5656e96fdac6c1aff4fc727d91add07b3",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 44544000,
+            "VmHWM_bytes": 44544000,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 49369088,
+            "memory_peak": 49369088,
+            "ru_maxrss_bytes": 44412928
+          }
+        },
+        {
+          "case": "M-shape-7-8-0",
+          "result": "pass",
+          "observation_sha256": "3174e38f0b138b298e63d7973e5601c16621601e2644db726fce9c3dd09d4be8",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2727936,
+            "VmHWM_bytes": 2727936,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7467008,
+            "memory_peak": 8462336,
+            "ru_maxrss_bytes": 12922880
+          }
+        },
+        {
+          "case": "M-shape-7-8-1",
+          "result": "pass",
+          "observation_sha256": "8accea0b975cb6dbaf303479e9d17b293574ae33f3d7cee1825ec5061089ca82",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2727936,
+            "VmHWM_bytes": 2727936,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7467008,
+            "memory_peak": 8196096,
+            "ru_maxrss_bytes": 12652544
+          }
+        },
+        {
+          "case": "M-shape-7-8-2",
+          "result": "pass",
+          "observation_sha256": "6f82082c943b11d8dcf45f7aa94a060b32c2c29a69eff6c536d9b2701f730a04",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2781184,
+            "VmHWM_bytes": 2781184,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 7577600,
+            "memory_peak": 8290304,
+            "ru_maxrss_bytes": 13307904
+          }
+        },
+        {
+          "case": "M-shape-7-16-0",
+          "result": "pass",
+          "observation_sha256": "11b3976f6f40a34768476fd4807b4f9f47e7857197e1174da9ce737e729e40a7",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 6942720,
+            "VmHWM_bytes": 6942720,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 11747328,
+            "memory_peak": 11747328,
+            "ru_maxrss_bytes": 13209600
+          }
+        },
+        {
+          "case": "M-shape-7-16-1",
+          "result": "pass",
+          "observation_sha256": "e0ae10a59fe4c58f31be5b6242f02fa2d0e5b1b8738bee656293a9863afc2cad",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 6926336,
+            "VmHWM_bytes": 6926336,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 11448320,
+            "memory_peak": 11448320,
+            "ru_maxrss_bytes": 12943360
+          }
+        },
+        {
+          "case": "M-shape-7-16-2",
+          "result": "pass",
+          "observation_sha256": "b5f7cf66e555a3251381216605f67d4ae2d50cdf81dc12b9c36c3ca9e35d0e14",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 6975488,
+            "VmHWM_bytes": 6975488,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 11640832,
+            "memory_peak": 11640832,
+            "ru_maxrss_bytes": 13033472
+          }
+        },
+        {
+          "case": "M-shape-7-20-0",
+          "result": "pass",
+          "observation_sha256": "ce0fcdb0ebe275de94fe18e7d32cb53366fd76c752e0c070a6161c9e19074e96",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 69984256,
+            "VmHWM_bytes": 69984256,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 74579968,
+            "memory_peak": 74579968,
+            "ru_maxrss_bytes": 69951488
+          }
+        },
+        {
+          "case": "M-shape-7-20-1",
+          "result": "pass",
+          "observation_sha256": "eece3271975f34db5825b6285e666d660c6f897a5096e1495d9e5e8e0a00a42b",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 69918720,
+            "VmHWM_bytes": 69918720,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 74604544,
+            "memory_peak": 74604544,
+            "ru_maxrss_bytes": 69693440
+          }
+        },
+        {
+          "case": "M-shape-7-20-2",
+          "result": "pass",
+          "observation_sha256": "61b52398b5bb2741252c63861919f4687272dcd2f6fbb6ba2239539f8dc7a34f",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 69914624,
+            "VmHWM_bytes": 69914624,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 74760192,
+            "memory_peak": 74760192,
+            "ru_maxrss_bytes": 69885952
+          }
+        },
+        {
+          "case": "M-charge-256MiB",
+          "result": "pass",
+          "observation_sha256": "f5f180b4fa42ad2e86b890ba10bd6dccc8f6f8a65aa8458042b046ad21e27e04",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 69578752,
+            "VmHWM_bytes": 69578752,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 74514432,
+            "memory_peak": 74514432,
+            "ru_maxrss_bytes": 69451776
+          }
+        },
+        {
+          "case": "M-charge-one-over",
+          "result": "pass",
+          "observation_sha256": "8b5e7016b7b3d556868b921d3e46824751f1f46609423c3310dd1115c3cdbe89",
+          "exit": 5,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 13369344
+          }
+        },
+        {
+          "case": "M-oom-small",
+          "result": "pass",
+          "observation_sha256": "03a4a8912762e7a3d9e72f626e87ca5d786d5f3cb611299c7e58792ba37499ce",
+          "exit": 137,
+          "oom_killed": true,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "134217728",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 127623168,
+            "VmHWM_bytes": 127623168,
+            "VmSize_bytes": 10741227520,
+            "memory_current": 132087808,
+            "memory_peak": 132349952,
+            "ru_maxrss_bytes": 129900544
+          }
+        },
+        {
+          "case": "M-oom-1GiB",
+          "result": "pass",
+          "observation_sha256": "73e6b884c3b093ae87fa1ee5fa58d7b1faf67dc9f9c6035085378c3815c420ce",
+          "exit": 137,
+          "oom_killed": true,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 1063223296,
+            "VmHWM_bytes": 1063223296,
+            "VmSize_bytes": 10741227520,
+            "memory_current": 1073508352,
+            "memory_peak": 1073741824,
+            "ru_maxrss_bytes": 1067393024
+          }
+        },
+        {
+          "case": "M-SIGTERM",
+          "result": "pass",
+          "observation_sha256": "02c80c2ec5aa7da947af0416f0f7fbbaaf42c46be8eff7432c24bd610fafe4c8",
+          "exit": 143,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": true,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 8863744,
+            "VmHWM_bytes": 8863744,
+            "VmSize_bytes": 10741227520,
+            "memory_current": 13492224,
+            "memory_peak": 13492224,
+            "ru_maxrss_bytes": 13266944
+          }
+        },
+        {
+          "case": "M-SIGKILL",
+          "result": "pass",
+          "observation_sha256": "29eb476faa7481882923e056dfd43d72316e79f698e0dae4b915fdeccfba1abc",
+          "exit": 137,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": true,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 8728576,
+            "VmHWM_bytes": 8728576,
+            "VmSize_bytes": 10741227520,
+            "memory_current": 13570048,
+            "memory_peak": 13570048,
+            "ru_maxrss_bytes": null
+          }
+        },
+        {
+          "case": "M-timeout",
+          "result": "pass",
+          "observation_sha256": "37f3cd1d79cf8b89b8a3f5b46ad50670dbef956a43d24d66edc3d52f37939fcf",
+          "exit": 137,
+          "oom_killed": false,
+          "timed_out": true,
+          "external_kill": true,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 7753728,
+            "VmHWM_bytes": 7753728,
+            "VmSize_bytes": 10741227520,
+            "memory_current": 12177408,
+            "memory_peak": 12177408,
+            "ru_maxrss_bytes": null
+          }
+        },
+        {
+          "case": "M-AS-is-not-RSS",
+          "result": "pass",
+          "observation_sha256": "27e8b1025660ad0a42b401f1e28ed74a1f9ca0b3fbc62efc0224cbfb4dac1dc0",
+          "exit": 1,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": null,
+            "VmHWM_bytes": null,
+            "VmSize_bytes": null,
+            "memory_current": null,
+            "memory_peak": null,
+            "ru_maxrss_bytes": 13078528
+          }
+        },
+        {
+          "case": "M-IO-read-SIGTERM",
+          "result": "pass",
+          "observation_sha256": "5e80ee66a05b8f8349be15ca9de9816f3c5896af19b1358a9bcf6df096986153",
+          "exit": 143,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": true,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2695168,
+            "VmHWM_bytes": 2695168,
+            "VmSize_bytes": 10749702144,
+            "memory_current": 7483392,
+            "memory_peak": 8482816,
+            "ru_maxrss_bytes": 12853248
+          }
+        },
+        {
+          "case": "M-IO-write-SIGKILL",
+          "result": "pass",
+          "observation_sha256": "4c56c6fee2cbb2c6f8f07aebd0eaa9b6ca7e9e9b43f2ee712a59fa01b769d126",
+          "exit": 137,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": true,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2670592,
+            "VmHWM_bytes": 2670592,
+            "VmSize_bytes": 10749702144,
+            "memory_current": 7131136,
+            "memory_peak": 8138752,
+            "ru_maxrss_bytes": null
+          }
+        },
+        {
+          "case": "M-IO-write-timeout",
+          "result": "pass",
+          "observation_sha256": "be29b75715dbc691c50b460b7fa505330d77fb0dc9f229564b848866bc5ac787",
+          "exit": 137,
+          "oom_killed": false,
+          "timed_out": true,
+          "external_kill": true,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 2625536,
+            "VmHWM_bytes": 2625536,
+            "VmSize_bytes": 10749702144,
+            "memory_current": 7344128,
+            "memory_peak": 8355840,
+            "ru_maxrss_bytes": null
+          }
+        },
+        {
+          "case": "M-index-256MiB-raw",
+          "result": "pass",
+          "observation_sha256": "41d098fdfa4edc6139cdb563d93465fa8596487b1a6a4178e539d25b0538c65b",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 270974976,
+            "VmHWM_bytes": 270974976,
+            "VmSize_bytes": 10741248000,
+            "memory_current": 276135936,
+            "memory_peak": 276135936,
+            "ru_maxrss_bytes": 270970880
+          }
+        },
+        {
+          "case": "M-stream-1048576-0",
+          "result": "pass",
+          "observation_sha256": "c5253d0c9bbe5349cf5f665b181775831c074be9bd2ef49a21fb584aec3b2f04",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5738496,
+            "VmHWM_bytes": 5738496,
+            "VmSize_bytes": 10749624320,
+            "memory_current": 11137024,
+            "memory_peak": 11137024,
+            "ru_maxrss_bytes": 13176832
+          }
+        },
+        {
+          "case": "M-stream-1048576-1",
+          "result": "pass",
+          "observation_sha256": "0ef3fc50dc02368140b809cfbb4c5f617816c75a760559822c2e56b992ff90ae",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5734400,
+            "VmHWM_bytes": 5734400,
+            "VmSize_bytes": 10749624320,
+            "memory_current": 11407360,
+            "memory_peak": 11407360,
+            "ru_maxrss_bytes": 13377536
+          }
+        },
+        {
+          "case": "M-stream-1048576-2",
+          "result": "pass",
+          "observation_sha256": "f6abb6e0390aef484b5133ff9819bd6110acacf932dda1281957c993991b1ba6",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5767168,
+            "VmHWM_bytes": 5767168,
+            "VmSize_bytes": 10749624320,
+            "memory_current": 10887168,
+            "memory_peak": 10887168,
+            "ru_maxrss_bytes": 13410304
+          }
+        },
+        {
+          "case": "M-stream-16777216-0",
+          "result": "pass",
+          "observation_sha256": "218a27249ecc5f4aadafbb5d4dcfdffa08e2107b7ebae07065061dcdd0609caf",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5668864,
+            "VmHWM_bytes": 5668864,
+            "VmSize_bytes": 10749624320,
+            "memory_current": 27451392,
+            "memory_peak": 27451392,
+            "ru_maxrss_bytes": 13045760
+          }
+        },
+        {
+          "case": "M-stream-16777216-1",
+          "result": "pass",
+          "observation_sha256": "80463890b3562c9002e1cf657e312783db045af79efd92f17ce25c2f349a921d",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5668864,
+            "VmHWM_bytes": 5668864,
+            "VmSize_bytes": 10749624320,
+            "memory_current": 27279360,
+            "memory_peak": 27541504,
+            "ru_maxrss_bytes": 13148160
+          }
+        },
+        {
+          "case": "M-stream-16777216-2",
+          "result": "pass",
+          "observation_sha256": "597458016536e51294182baab7b13438ace5451ea3093a8150ced3004ee0e522",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5664768,
+            "VmHWM_bytes": 5664768,
+            "VmSize_bytes": 10749624320,
+            "memory_current": 28110848,
+            "memory_peak": 28110848,
+            "ru_maxrss_bytes": 12644352
+          }
+        },
+        {
+          "case": "M-stream-67108864-0",
+          "result": "pass",
+          "observation_sha256": "202750f352e8322066c298fe48ca042ccf0ad117bb79185301cb66e6c735830c",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5795840,
+            "VmHWM_bytes": 5795840,
+            "VmSize_bytes": 10749624320,
+            "memory_current": 78987264,
+            "memory_peak": 78987264,
+            "ru_maxrss_bytes": 12951552
+          }
+        },
+        {
+          "case": "M-stream-67108864-1",
+          "result": "pass",
+          "observation_sha256": "762447427efb8fd4757f3d145ca4183a153933694229b411e051cef77a539be9",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5664768,
+            "VmHWM_bytes": 5664768,
+            "VmSize_bytes": 10749624320,
+            "memory_current": 78778368,
+            "memory_peak": 78778368,
+            "ru_maxrss_bytes": 12943360
+          }
+        },
+        {
+          "case": "M-stream-67108864-2",
+          "result": "pass",
+          "observation_sha256": "98057c8184f18fe9d1c6e21778becc5df64b684d05c209c28c45596765f8963b",
+          "exit": 0,
+          "oom_killed": false,
+          "timed_out": false,
+          "external_kill": false,
+          "limits": {
+            "memory.max": "1073741824",
+            "memory.swap.max": "0"
+          },
+          "metrics": {
+            "VmRSS_bytes": 5599232,
+            "VmHWM_bytes": 5599232,
+            "VmSize_bytes": 10749624320,
+            "memory_current": 79093760,
+            "memory_peak": 79093760,
+            "ru_maxrss_bytes": 13287424
+          }
+        }
+      ]
+    }
+  ],
+  "shape_metrics": {
+    "M-shape-0-8": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 2531328,
+        "median": 2596864,
+        "max": 2596864
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 2531328,
+        "median": 2596864,
+        "max": 2596864
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 7245824,
+        "median": 7413760,
+        "max": 7438336
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 7946240,
+        "median": 8400896,
+        "max": 8429568
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12677120,
+        "median": 12738560,
+        "max": 13262848
+      }
+    },
+    "M-shape-1-8": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 2625536,
+        "median": 2674688,
+        "max": 2686976
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 2625536,
+        "median": 2674688,
+        "max": 2686976
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 7172096,
+        "median": 7471104,
+        "max": 7843840
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 8183808,
+        "median": 8462336,
+        "max": 8585216
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 13131776,
+        "median": 13303808,
+        "max": 13307904
+      }
+    },
+    "M-shape-1-16": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 2899968,
+        "median": 2912256,
+        "max": 2920448
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 2899968,
+        "median": 2912256,
+        "max": 2920448
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 7393280,
+        "median": 7458816,
+        "max": 7827456
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 8130560,
+        "median": 8208384,
+        "max": 8556544
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12668928,
+        "median": 13201408,
+        "max": 13225984
+      }
+    },
+    "M-shape-1-20": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 6660096,
+        "median": 6660096,
+        "max": 6791168
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 6660096,
+        "median": 6660096,
+        "max": 6791168
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 11145216,
+        "median": 11333632,
+        "max": 11382784
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 11145216,
+        "median": 11333632,
+        "max": 11382784
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12939264,
+        "median": 13111296,
+        "max": 13389824
+      }
+    },
+    "M-shape-2-8": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 2527232,
+        "median": 2543616,
+        "max": 2547712
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 2527232,
+        "median": 2543616,
+        "max": 2547712
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 7229440,
+        "median": 7331840,
+        "max": 7553024
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 8224768,
+        "median": 8294400,
+        "max": 8556544
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12926976,
+        "median": 13152256,
+        "max": 13295616
+      }
+    },
+    "M-shape-2-16": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 3579904,
+        "median": 3579904,
+        "max": 3706880
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 3579904,
+        "median": 3579904,
+        "max": 3706880
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 8306688,
+        "median": 8335360,
+        "max": 8683520
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 8306688,
+        "median": 8339456,
+        "max": 8683520
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12943360,
+        "median": 12943360,
+        "max": 13209600
+      }
+    },
+    "M-shape-2-20": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 19263488,
+        "median": 19292160,
+        "max": 19439616
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 19263488,
+        "median": 19292160,
+        "max": 19439616
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 23965696,
+        "median": 24158208,
+        "max": 24260608
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 23965696,
+        "median": 24158208,
+        "max": 24260608
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 19247104,
+        "median": 19283968,
+        "max": 19423232
+      }
+    },
+    "M-shape-3-8": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 2482176,
+        "median": 2654208,
+        "max": 2715648
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 2482176,
+        "median": 2654208,
+        "max": 2715648
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 7204864,
+        "median": 7217152,
+        "max": 7397376
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 8171520,
+        "median": 8208384,
+        "max": 8384512
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12963840,
+        "median": 13074432,
+        "max": 13336576
+      }
+    },
+    "M-shape-3-16": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 3624960,
+        "median": 3624960,
+        "max": 3678208
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 3624960,
+        "median": 3624960,
+        "max": 3678208
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 8044544,
+        "median": 8114176,
+        "max": 8273920
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 8044544,
+        "median": 8114176,
+        "max": 8273920
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12656640,
+        "median": 12890112,
+        "max": 13361152
+      }
+    },
+    "M-shape-3-20": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 19247104,
+        "median": 19378176,
+        "max": 19423232
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 19247104,
+        "median": 19378176,
+        "max": 19423232
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 23613440,
+        "median": 23982080,
+        "max": 23994368
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 23613440,
+        "median": 23982080,
+        "max": 23994368
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 19120128,
+        "median": 19374080,
+        "max": 19406848
+      }
+    },
+    "M-shape-4-8": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 2596864,
+        "median": 2617344,
+        "max": 2654208
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 2596864,
+        "median": 2617344,
+        "max": 2654208
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 7122944,
+        "median": 7159808,
+        "max": 7176192
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 8118272,
+        "median": 8151040,
+        "max": 8183808
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 13148160,
+        "median": 13197312,
+        "max": 13402112
+      }
+    },
+    "M-shape-4-16": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 5214208,
+        "median": 5214208,
+        "max": 5234688
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 5214208,
+        "median": 5214208,
+        "max": 5234688
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 9908224,
+        "median": 10108928,
+        "max": 10170368
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 9908224,
+        "median": 10108928,
+        "max": 10170368
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12898304,
+        "median": 13012992,
+        "max": 13373440
+      }
+    },
+    "M-shape-4-20": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 44523520,
+        "median": 44544000,
+        "max": 44584960
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 44523520,
+        "median": 44544000,
+        "max": 44584960
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 49147904,
+        "median": 49152000,
+        "max": 49336320
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 49147904,
+        "median": 49152000,
+        "max": 49336320
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 44396544,
+        "median": 44527616,
+        "max": 44564480
+      }
+    },
+    "M-shape-5-8": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 2596864,
+        "median": 2662400,
+        "max": 2662400
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 2596864,
+        "median": 2662400,
+        "max": 2662400
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 6934528,
+        "median": 7180288,
+        "max": 7208960
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 7933952,
+        "median": 8179712,
+        "max": 8204288
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 13012992,
+        "median": 13070336,
+        "max": 13398016
+      }
+    },
+    "M-shape-5-16": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 5156864,
+        "median": 5197824,
+        "max": 5287936
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 5156864,
+        "median": 5197824,
+        "max": 5287936
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 10096640,
+        "median": 10113024,
+        "max": 10182656
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 10096640,
+        "median": 10113024,
+        "max": 10182656
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 13217792,
+        "median": 13217792,
+        "max": 13451264
+      }
+    },
+    "M-shape-5-20": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 44421120,
+        "median": 44425216,
+        "max": 44666880
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 44421120,
+        "median": 44425216,
+        "max": 44666880
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 49102848,
+        "median": 49168384,
+        "max": 49520640
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 49102848,
+        "median": 49168384,
+        "max": 49520640
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 44404736,
+        "median": 44527616,
+        "max": 44650496
+      }
+    },
+    "M-shape-6-8": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 2592768,
+        "median": 2596864,
+        "max": 2650112
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 2592768,
+        "median": 2596864,
+        "max": 2650112
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 7217152,
+        "median": 7290880,
+        "max": 7417856
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 8155136,
+        "median": 8232960,
+        "max": 8261632
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12955648,
+        "median": 13099008,
+        "max": 13393920
+      }
+    },
+    "M-shape-6-16": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 5156864,
+        "median": 5222400,
+        "max": 5287936
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 5156864,
+        "median": 5222400,
+        "max": 5287936
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 9695232,
+        "median": 10121216,
+        "max": 10121216
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 9695232,
+        "median": 10121216,
+        "max": 10121216
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12988416,
+        "median": 12992512,
+        "max": 13410304
+      }
+    },
+    "M-shape-6-20": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 44531712,
+        "median": 44544000,
+        "max": 44597248
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 44531712,
+        "median": 44544000,
+        "max": 44597248
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 49233920,
+        "median": 49369088,
+        "max": 49418240
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 49233920,
+        "median": 49369088,
+        "max": 49418240
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 44281856,
+        "median": 44412928,
+        "max": 44462080
+      }
+    },
+    "M-shape-7-8": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 2727936,
+        "median": 2727936,
+        "max": 2781184
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 2727936,
+        "median": 2727936,
+        "max": 2781184
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 7467008,
+        "median": 7467008,
+        "max": 7577600
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 8196096,
+        "median": 8290304,
+        "max": 8462336
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12652544,
+        "median": 12922880,
+        "max": 13307904
+      }
+    },
+    "M-shape-7-16": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 6926336,
+        "median": 6942720,
+        "max": 6975488
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 6926336,
+        "median": 6942720,
+        "max": 6975488
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 11448320,
+        "median": 11640832,
+        "max": 11747328
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 11448320,
+        "median": 11640832,
+        "max": 11747328
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12943360,
+        "median": 13033472,
+        "max": 13209600
+      }
+    },
+    "M-shape-7-20": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 69914624,
+        "median": 69918720,
+        "max": 69984256
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 69914624,
+        "median": 69918720,
+        "max": 69984256
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10741248000,
+        "median": 10741248000,
+        "max": 10741248000
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 74579968,
+        "median": 74604544,
+        "max": 74760192
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 74579968,
+        "median": 74604544,
+        "max": 74760192
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 69693440,
+        "median": 69885952,
+        "max": 69951488
+      }
+    }
+  },
+  "stream_metrics": {
+    "M-stream-1048576": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 5734400,
+        "median": 5738496,
+        "max": 5767168
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 5734400,
+        "median": 5738496,
+        "max": 5767168
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10749624320,
+        "median": 10749624320,
+        "max": 10749624320
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 10887168,
+        "median": 11137024,
+        "max": 11407360
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 10887168,
+        "median": 11137024,
+        "max": 11407360
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 13176832,
+        "median": 13377536,
+        "max": 13410304
+      }
+    },
+    "M-stream-16777216": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 5664768,
+        "median": 5668864,
+        "max": 5668864
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 5664768,
+        "median": 5668864,
+        "max": 5668864
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10749624320,
+        "median": 10749624320,
+        "max": 10749624320
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 27279360,
+        "median": 27451392,
+        "max": 28110848
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 27451392,
+        "median": 27541504,
+        "max": 28110848
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12644352,
+        "median": 13045760,
+        "max": 13148160
+      }
+    },
+    "M-stream-67108864": {
+      "VmRSS_bytes": {
+        "n": 3,
+        "min": 5599232,
+        "median": 5664768,
+        "max": 5795840
+      },
+      "VmHWM_bytes": {
+        "n": 3,
+        "min": 5599232,
+        "median": 5664768,
+        "max": 5795840
+      },
+      "VmSize_bytes": {
+        "n": 3,
+        "min": 10749624320,
+        "median": 10749624320,
+        "max": 10749624320
+      },
+      "memory_current": {
+        "n": 3,
+        "min": 78778368,
+        "median": 78987264,
+        "max": 79093760
+      },
+      "memory_peak": {
+        "n": 3,
+        "min": 78778368,
+        "median": 78987264,
+        "max": 79093760
+      },
+      "ru_maxrss_bytes": {
+        "n": 3,
+        "min": 12943360,
+        "median": 12951552,
+        "max": 13287424
+      }
+    }
+  },
+  "build_sha256": "41fd62e392bee1ba6b77a3feddceb3bd4d579cd0267ba79dcfc675ab2801a8e2",
+  "compiler_source": "266b02ee40a2ad0c42608db32c08c5c7b6a8f5ae",
+  "provenance": {
+    "packages_sha256": "b8efb4b896d72aa32227c88527c2f10d6fadf8147b7da50d43ee06ef82f99fcc",
+    "compiler_tree_sha256": "411aa6bb80070c90c28074c6d14ace1639bbe6fe1b8c59f0a258a2dac09b8a8f",
+    "bun_binary_sha256": "fcc6178e840568f7e124d1556acef7b7105134df16f13aa69d9b2ad09a375d5a"
+  },
+  "ownership_checks": [
+    {
+      "source": "array_reuse.bend",
+      "control": false,
+      "exit": 1,
+      "source_sha256": "c3c955f67d6b0cf8d97ee237373f40fce3b4ed28ba058f72bdb27f14467d84e9",
+      "diagnostic": "SOME PROOFS FAIL\nError:\n- expected : a\n- observed : a (consumed more than once)\nLocation: duplicate\n2 | \n3>| def duplicate(a: Array<U32>) -> Array<U32> & Array<U32>:\n  |               ^\n4 |   (a, a)\n"
+    },
+    {
+      "source": "array_reuse_control.bend",
+      "control": true,
+      "exit": 0,
+      "source_sha256": "92a442c18df032b80f73d0b4ef2e88cd7b8ea3fefd7b33e13015c806bcf4ffa4",
+      "diagnostic": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n"
+    },
+    {
+      "source": "file_reuse.bend",
+      "control": false,
+      "exit": 1,
+      "source_sha256": "9d8c76e08697999bb3f1ff79e01a238a9efcca7b5ee8ad717c16316d5088d5dd",
+      "diagnostic": "SOME PROOFS FAIL\nError:\n- expected : f\n- observed : f (consumed more than once)\nLocation: close_twice\n2 | \n3>| def close_twice(f: File) -> IO(Unit):\n  |                 ^\n4 |   do IO<Unit>:\n"
+    },
+    {
+      "source": "file_reuse_control.bend",
+      "control": true,
+      "exit": 0,
+      "source_sha256": "7852a941cf7784fc05ef13a93fefd3de0039812a7f35958125cc3004ff7abb74",
+      "diagnostic": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n"
+    }
+  ]
+}

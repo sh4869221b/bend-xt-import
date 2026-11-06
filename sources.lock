@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "recipe": "issue1-linux-amd64-single-worker-v1",
+  "platform": "linux/amd64",
+  "build_image": {
+    "reference": "debian@sha256:7378260c0a098d27ac206225db5e7d92b8c7c84ea7afccc86eeb513756bbd392",
+    "snapshot": "https://snapshot.debian.org/archive/debian/20261105T000000Z/",
+    "suite": "trixie",
+    "packages_file": "tools/runtime/packages.lock",
+    "packages_sha256": "b8efb4b896d72aa32227c88527c2f10d6fadf8147b7da50d43ee06ef82f99fcc",
+    "license": "Multiple Debian package licenses; /usr/share/doc/<package>/copyright in the build image"
+  },
+  "artifacts": [
+    {
+      "name": "bend-source.tar.gz",
+      "role": "compiler-source",
+      "revision": "266b02ee40a2ad0c42608db32c08c5c7b6a8f5ae",
+      "version": "2.0.40",
+      "url": "https://codeload.github.com/bendlang/bend/tar.gz/266b02ee40a2ad0c42608db32c08c5c7b6a8f5ae",
+      "sha256": "c9280dabf2d2511951d002f4c45f664eb353f940ef82df24ce59f6515e6f4051",
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/bendlang/bend/blob/266b02ee40a2ad0c42608db32c08c5c7b6a8f5ae/LICENSE"
+    },
+    {
+      "name": "bun-linux-x64-baseline.zip",
+      "role": "compiler-host",
+      "version": "1.3.2",
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.3.2/bun-linux-x64-baseline.zip",
+      "sha256": "7ff09a4a519e8206d60d7b763072cbf3642f8370690165586d303faf21692172",
+      "license": "MIT; bundled dependency licenses also apply",
+      "license_url": "https://github.com/oven-sh/bun/blob/bun-v1.3.2/LICENSE.md",
+      "license_git_blob_sha": "4cc901b7bcfee25ce4ac7f84336a1eae603c0b3e"
+    }
+  ],
+  "references": [
+    {
+      "name": "xTranslator",
+      "role": "reference-only; no source copied",
+      "revision": "9aa38d60860273401f8bb0dd1557c82a295c41b3",
+      "url": "https://github.com/MGuffin/xTranslator",
+      "license": "MPL-2.0",
+      "license_url": "https://github.com/MGuffin/xTranslator/blob/9aa38d60860273401f8bb0dd1557c82a295c41b3/LICENSE",
+      "license_git_blob_sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "name": "xEdit",
+      "role": "reference-only; no source copied",
+      "revision": "9058a79437367c2cb1b757a9021ab443d743012d",
+      "url": "https://github.com/TES5Edit/TES5Edit",
+      "license": "MPL-2.0",
+      "license_url": "https://github.com/TES5Edit/TES5Edit/blob/9058a79437367c2cb1b757a9021ab443d743012d/LICENSE.txt",
+      "license_git_blob_sha": "f4bbcd200ad42bbb2fe2faf67e87e8619fafc17a"
+    }
+  ],
+  "compiler_tree_sha256": "411aa6bb80070c90c28074c6d14ace1639bbe6fe1b8c59f0a258a2dac09b8a8f",
+  "bun_binary_sha256": "fcc6178e840568f7e124d1556acef7b7105134df16f13aa69d9b2ad09a375d5a",
+  "probe_image": {
+    "base": "debian@sha256:7378260c0a098d27ac206225db5e7d92b8c7c84ea7afccc86eeb513756bbd392",
+    "snapshot": "https://snapshot.debian.org/archive/debian/20261105T000000Z/",
+    "packages_file": "tools/runtime/probe-packages.lock",
+    "packages_sha256": "bf7d367329bf606aa493b21308294b3cae259d45360d0dda06095c60567b640b"
+  },
+  "ci_actions": [
+    {
+      "repository": "actions/checkout",
+      "revision": "11d5960a326750d5838078e36cf38b85af677262",
+      "license": "MIT"
+    },
+    {
+      "repository": "actions/upload-artifact",
+      "revision": "ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "license": "MIT"
+    }
+  ]
+}

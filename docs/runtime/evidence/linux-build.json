@@ -1,0 +1,742 @@
+{
+  "schema": 1,
+  "provenance": {
+    "packages_sha256": "b8efb4b896d72aa32227c88527c2f10d6fadf8147b7da50d43ee06ef82f99fcc",
+    "compiler_tree_sha256": "411aa6bb80070c90c28074c6d14ace1639bbe6fe1b8c59f0a258a2dac09b8a8f",
+    "bun_binary_sha256": "fcc6178e840568f7e124d1556acef7b7105134df16f13aa69d9b2ad09a375d5a"
+  },
+  "compiler_source": "266b02ee40a2ad0c42608db32c08c5c7b6a8f5ae",
+  "base_sha256": "ff90fb27ed19d5c7a6165170f28ad81562bf345b9a9e6134e5c2e326beff9de4",
+  "packages_sha256": "b8efb4b896d72aa32227c88527c2f10d6fadf8147b7da50d43ee06ef82f99fcc",
+  "probes": [
+    {
+      "probe": "affine_arrays",
+      "source_sha256": "e0830237b29f1b7e5be2cacbed717c96b0f4a5893c7bf4f71d7a6b203c35e115",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/affine_arrays.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/affine_arrays.bend",
+            "-o",
+            "/work/build/affine_arrays"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/affine_arrays.bend",
+            "-o",
+            "/work/build/affine_arrays.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "c15f836282bc8fd586e16b34abca9fdbe47a43a1a2abbf929e39b783d13500de",
+      "c_sha256": "35272f68764e0d31f4f8a9762414a32155c7778ef2bbe01cce7891f91b12d6bf"
+    },
+    {
+      "probe": "argv_exit",
+      "source_sha256": "2fd705bcf68f2c1033451b033552de9987946ba5930a240331bdaaf76492ebf4",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/argv_exit.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/argv_exit.bend",
+            "-o",
+            "/work/build/argv_exit"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/argv_exit.bend",
+            "-o",
+            "/work/build/argv_exit.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "1e54ceb287f3270a2f5e7015b5d75ae3b42a3331066b7989cbe1230312054a6e",
+      "c_sha256": "a361dd21063dc87bb32fe352731844ff3eb02ef83b1d4c8f4c62968c9bf8a36d"
+    },
+    {
+      "probe": "binary_roundtrip",
+      "source_sha256": "ed14c19a28707943bbf006794d753476c012a7c41ff1880e4115784fa0176422",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/binary_roundtrip.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/binary_roundtrip.bend",
+            "-o",
+            "/work/build/binary_roundtrip"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/binary_roundtrip.bend",
+            "-o",
+            "/work/build/binary_roundtrip.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "dec79d3568a2077d112e1f08c92002457e2d87f68899a1a68a549dc761820c64",
+      "c_sha256": "6c22607eafeaff2dc584cfb48dda5f5c2b046564cbd355d304c02ca793b2ea89"
+    },
+    {
+      "probe": "budget_work",
+      "source_sha256": "17e9938f0d049b51fc76501d68c4edd3aa558fe2741558ad84bc323e2a74e0e9",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/budget_work.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/budget_work.bend",
+            "-o",
+            "/work/build/budget_work"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/budget_work.bend",
+            "-o",
+            "/work/build/budget_work.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "f4fa597e4fc7ec1b04271ab86500e735e6a64468d104699550f0b72784735be9",
+      "c_sha256": "deb96b40edaec88a4948e65c1c03900cc6a6b41b616fec8eabec9f56f9e9994a"
+    },
+    {
+      "probe": "charged_array",
+      "source_sha256": "be63c17d8f86dbbb84fbfb997b5f1400e14d76bb7958ff18296803525f13002f",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/charged_array.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/charged_array.bend",
+            "-o",
+            "/work/build/charged_array"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/charged_array.bend",
+            "-o",
+            "/work/build/charged_array.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "1df751b5689c2595dc2631d97a3adee8451687fd41414103eb653382c3c69770",
+      "c_sha256": "7df99b1308dd12341aa2d51c34297bd3ba2a0a5b17bd228a7af3b074edf6180f"
+    },
+    {
+      "probe": "chunk_stream",
+      "source_sha256": "2075e18a68fe8883f59598063af4049faeb751f56503ac8c4a679464a239c1b0",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/chunk_stream.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/chunk_stream.bend",
+            "-o",
+            "/work/build/chunk_stream"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/chunk_stream.bend",
+            "-o",
+            "/work/build/chunk_stream.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "009f7ecd977ee755c6a8812c410eecc66d1955dc87bd6f341df61d28d7c3e872",
+      "c_sha256": "3fa5a05b4131a3008f24fabb86d30fa23eb31ecda765ed891b56b811d40a3639"
+    },
+    {
+      "probe": "exclusive_create",
+      "source_sha256": "bfcff7ad24c2262f871ca39ad48b4f72ddb5de7877dc2e51bf1a84b7cb98e0c0",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/exclusive_create.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/exclusive_create.bend",
+            "-o",
+            "/work/build/exclusive_create"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/exclusive_create.bend",
+            "-o",
+            "/work/build/exclusive_create.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "2ca2c6b82d0f7716a631cf1beb53748e979afdf274ab4d10a2d148f8a26f7020",
+      "c_sha256": "5f18893a10e04ba7690cabc8c84ec4e263c7c0d24f1965d38ac68f3eef1caacd"
+    },
+    {
+      "probe": "io_errors",
+      "source_sha256": "70fc133d5b32fa82330ba19de52b90c967063d79ec55ea186786030742d91b90",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/io_errors.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/io_errors.bend",
+            "-o",
+            "/work/build/io_errors"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/io_errors.bend",
+            "-o",
+            "/work/build/io_errors.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "aa4dd550e9d243af7dd364003b33b1d4be956aa9f87e4a79f0312a784d4a1b1f",
+      "c_sha256": "39bd3f1fb74b5209257fb9f7f5709bdffe5a95827e896358ea33da605f731b0e"
+    },
+    {
+      "probe": "memory_pressure",
+      "source_sha256": "03d2a295df4cf310c0e0957c7b091b65d9363d30670570799c156331232041c8",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/memory_pressure.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/memory_pressure.bend",
+            "-o",
+            "/work/build/memory_pressure"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/memory_pressure.bend",
+            "-o",
+            "/work/build/memory_pressure.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "a4adb45ccfd6d862caa0003302ea2da4679d21764e6dc87f39074214ec88317a",
+      "c_sha256": "4b624d6a5a41392578891238d5e255424969aa2264280d89af9bbee1b6aabcb8"
+    },
+    {
+      "probe": "memory_shapes",
+      "source_sha256": "6c46ef09bcdd1398a34d344ed1a33a8960b24f3db6ccd06eb167566b93013ce0",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/memory_shapes.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/memory_shapes.bend",
+            "-o",
+            "/work/build/memory_shapes"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/memory_shapes.bend",
+            "-o",
+            "/work/build/memory_shapes.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "20909870352a02bdcca32aa3d61f281f77d479375ebb8994f8df24e5073d9932",
+      "c_sha256": "331301d9f6631f707b2751f4bb929e6db0c24065d60d9d5561992159fe484a75"
+    },
+    {
+      "probe": "offsets",
+      "source_sha256": "a24838890d6bea0f0afea501c1b4a3fd3f167acd735519176aac828b234fe2d6",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/offsets.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/offsets.bend",
+            "-o",
+            "/work/build/offsets"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/offsets.bend",
+            "-o",
+            "/work/build/offsets.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "eb6fed568195835bf5aac8c22f4dd1a7ad7fa512e5f01aaaa64e6fa5164a616c",
+      "c_sha256": "804cbc8d556daf0595289d8c2d9c67ac25b8803fdea8c59d2957c35aee89624e"
+    },
+    {
+      "probe": "range_guard",
+      "source_sha256": "ec93d104d3bc2c325089114589b97ff101494ec7e7773d538eb103d3681db359",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/range_guard.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/range_guard.bend",
+            "-o",
+            "/work/build/range_guard"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/range_guard.bend",
+            "-o",
+            "/work/build/range_guard.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "845d19325521a4a6386879cdd06c1c4ce1b3bfbebededcf6c438611fceda3740",
+      "c_sha256": "f4de18166dfd6ec6f53b9f78a38cfa4b0ddf156d8b26c299c1a73d46edc5fc1a"
+    },
+    {
+      "probe": "sha_primitives",
+      "source_sha256": "589c007b61ebd15f75d84f54e0687da7745c4e7a1f0770a0b7c7e36409dd0946",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/sha_primitives.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/sha_primitives.bend",
+            "-o",
+            "/work/build/sha_primitives"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/sha_primitives.bend",
+            "-o",
+            "/work/build/sha_primitives.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "0dde729db73086c977a29215a16becb87c823b397adc6bc1e96fcc9cc649c3fe",
+      "c_sha256": "4768c5ea4ff061ee04e86e534f6edc8b1e536f64a30d93a636b2aefe0f9715d9"
+    },
+    {
+      "probe": "short_io",
+      "source_sha256": "2c870171b435bd2565e35c5b838c490031692cf94e926813ca1ae1e48f870074",
+      "steps": [
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/short_io.bend",
+            "--check-only"
+          ],
+          "exit": 0,
+          "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/short_io.bend",
+            "-o",
+            "/work/build/short_io"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/bun/bun-linux-x64-baseline/bun",
+            "--no-env-file",
+            "/opt/bend/bend2/main.ts",
+            "/work/tests/runtime/probes/short_io.bend",
+            "-o",
+            "/work/build/short_io.c"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "binary_sha256": "4a9f712919396bf63b9fa3adb830b396bf4adcd7f2fba049cd3f474e3e118cd1",
+      "c_sha256": "f43281293a08ac90e575f1d6140c757224fa43adfde5ceefd2fab13f35cc3a9b"
+    }
+  ],
+  "ownership_checks": [
+    {
+      "source": "array_reuse.bend",
+      "control": false,
+      "exit": 1,
+      "source_sha256": "c3c955f67d6b0cf8d97ee237373f40fce3b4ed28ba058f72bdb27f14467d84e9",
+      "diagnostic": "SOME PROOFS FAIL\nError:\n- expected : a\n- observed : a (consumed more than once)\nLocation: duplicate\n2 | \n3>| def duplicate(a: Array<U32>) -> Array<U32> & Array<U32>:\n  |               ^\n4 |   (a, a)\n"
+    },
+    {
+      "source": "array_reuse_control.bend",
+      "control": true,
+      "exit": 0,
+      "source_sha256": "92a442c18df032b80f73d0b4ef2e88cd7b8ea3fefd7b33e13015c806bcf4ffa4",
+      "diagnostic": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n"
+    },
+    {
+      "source": "file_reuse.bend",
+      "control": false,
+      "exit": 1,
+      "source_sha256": "9d8c76e08697999bb3f1ff79e01a238a9efcca7b5ee8ad717c16316d5088d5dd",
+      "diagnostic": "SOME PROOFS FAIL\nError:\n- expected : f\n- observed : f (consumed more than once)\nLocation: close_twice\n2 | \n3>| def close_twice(f: File) -> IO(Unit):\n  |                 ^\n4 |   do IO<Unit>:\n"
+    },
+    {
+      "source": "file_reuse_control.bend",
+      "control": true,
+      "exit": 0,
+      "source_sha256": "7852a941cf7784fc05ef13a93fefd3de0039812a7f35958125cc3004ff7abb74",
+      "diagnostic": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.\n"
+    }
+  ],
+  "interposer_argv": [
+    "/usr/bin/clang-19",
+    "-shared",
+    "-fPIC",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "/work/tests/runtime/native/fault_inject.c",
+    "-o",
+    "/work/build/fault_inject.so"
+  ],
+  "interposer_sha256": "129591d6bbf044b1106c5d96c6ffd92045574bf02904ab64a1d548c47f4c2625",
+  "race_sha256": "e626233054e8062a732f933dca1654a3b49a8eb0e2d74b9f0a3ae29be4a819ed",
+  "complete": true,
+  "inputs": {
+    ".github/workflows/runtime-probes.yml": "b10e451c44b61a5dbdc02d5260f88dff7687ba2787af9151951bb027d09acef4",
+    "sources.lock": "c693e483f90bd8fa08c41f47315f39c7e87c3567869a3940d26758647755b1da",
+    "tests/runtime/native/exclusive_race.c": "3dd7655f53f5f09692aca05ed1fcf3aea68964befc76d1b0dde11cfc742ec3a4",
+    "tests/runtime/native/fault_inject.c": "e2221bbbef688f3ec34884b52c364fc73c37bdffa6562eaf55a29ca9788058c9",
+    "tests/runtime/negative/array_reuse.bend": "c3c955f67d6b0cf8d97ee237373f40fce3b4ed28ba058f72bdb27f14467d84e9",
+    "tests/runtime/negative/array_reuse_control.bend": "92a442c18df032b80f73d0b4ef2e88cd7b8ea3fefd7b33e13015c806bcf4ffa4",
+    "tests/runtime/negative/file_reuse.bend": "9d8c76e08697999bb3f1ff79e01a238a9efcca7b5ee8ad717c16316d5088d5dd",
+    "tests/runtime/negative/file_reuse_control.bend": "7852a941cf7784fc05ef13a93fefd3de0039812a7f35958125cc3004ff7abb74",
+    "tests/runtime/probes/Support.bend": "0d11534c3dee9c981b7b8c9ca98b4ffe10f5997884f19692528b1235089e2afb",
+    "tests/runtime/probes/affine_arrays.bend": "e0830237b29f1b7e5be2cacbed717c96b0f4a5893c7bf4f71d7a6b203c35e115",
+    "tests/runtime/probes/argv_exit.bend": "2fd705bcf68f2c1033451b033552de9987946ba5930a240331bdaaf76492ebf4",
+    "tests/runtime/probes/binary_roundtrip.bend": "ed14c19a28707943bbf006794d753476c012a7c41ff1880e4115784fa0176422",
+    "tests/runtime/probes/budget_work.bend": "17e9938f0d049b51fc76501d68c4edd3aa558fe2741558ad84bc323e2a74e0e9",
+    "tests/runtime/probes/charged_array.bend": "be63c17d8f86dbbb84fbfb997b5f1400e14d76bb7958ff18296803525f13002f",
+    "tests/runtime/probes/chunk_stream.bend": "2075e18a68fe8883f59598063af4049faeb751f56503ac8c4a679464a239c1b0",
+    "tests/runtime/probes/exclusive_create.bend": "bfcff7ad24c2262f871ca39ad48b4f72ddb5de7877dc2e51bf1a84b7cb98e0c0",
+    "tests/runtime/probes/io_errors.bend": "70fc133d5b32fa82330ba19de52b90c967063d79ec55ea186786030742d91b90",
+    "tests/runtime/probes/memory_pressure.bend": "03d2a295df4cf310c0e0957c7b091b65d9363d30670570799c156331232041c8",
+    "tests/runtime/probes/memory_shapes.bend": "6c46ef09bcdd1398a34d344ed1a33a8960b24f3db6ccd06eb167566b93013ce0",
+    "tests/runtime/probes/offsets.bend": "a24838890d6bea0f0afea501c1b4a3fd3f167acd735519176aac828b234fe2d6",
+    "tests/runtime/probes/range_guard.bend": "ec93d104d3bc2c325089114589b97ff101494ec7e7773d538eb103d3681db359",
+    "tests/runtime/probes/sha_primitives.bend": "589c007b61ebd15f75d84f54e0687da7745c4e7a1f0770a0b7c7e36409dd0946",
+    "tests/runtime/probes/short_io.bend": "2c870171b435bd2565e35c5b838c490031692cf94e926813ca1ae1e48f870074",
+    "tools/runtime/Dockerfile": "b8287ac2fc8719b83a69281f0b5ffa144bda85f94c6dac5f90d1b62190fa4edc",
+    "tools/runtime/bootstrap.py": "d24ca344da53f8d5415f522844a10454e90090f5653f46459328318d64653420",
+    "tools/runtime/build_probes.py": "c485f1b064285bf1d0757a21a73f248cb2ad3b6138bedfd7b65d1b9486e8082b",
+    "tools/runtime/case_spec.py": "1ec30a5a89c5ce5ac8f696c04d584efe9a9d7e0de58dd51855b1175a5f3e6b5e",
+    "tools/runtime/experiment.py": "f9f391c588846e362448582ec1dc65c144d5460ed354b3a5348e0a1a409cbf11",
+    "tools/runtime/fetch_toolchain.py": "13b77171a14ca20ccb0f5893569db14aff15e4684ce2a09740f0a4add22102b9",
+    "tools/runtime/integrity.py": "38384136a823c87f22b856d5a249015139388f5a01740d512e039c93b7bc01b0",
+    "tools/runtime/measure.py": "44098242dd9a91f5fcf50e3b2ac09b5d3267323b380cde0beaafce014dd53764",
+    "tools/runtime/native_entry.py": "d659510563852c3da45865fc941c407c5621422a0f5319d2ae0b12f39fcf70c4",
+    "tools/runtime/packages.lock": "b8efb4b896d72aa32227c88527c2f10d6fadf8147b7da50d43ee06ef82f99fcc",
+    "tools/runtime/probe-packages.lock": "bf7d367329bf606aa493b21308294b3cae259d45360d0dda06095c60567b640b",
+    "tools/runtime/run_probes.py": "270b5105bdee9e6f94a0cd675f0e1da4bc5765d11837db98285aa16df8bcf7e3",
+    "tools/runtime/summarize.py": "b4a2002c8a88f45de8f76720a28f7b5f352c5c4c020a7b36497fad2964ad5fec",
+    "tools/runtime/test_evidence.py": "f4d2347b0a44aa09ac7209a211bdc505a08dbe696fd6bb8dfb94adcc16206ce8",
+    "tools/runtime/verify_lock.py": "b0cf0aa43214c596efa9244cdf1c1dab2f52f2ced4bbb90845b8a84269e42ca4"
+  }
+}
