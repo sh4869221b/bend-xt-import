@@ -18,17 +18,22 @@ jobs:
         run: |
           set -euo pipefail
           fixture="/opt/bend-host-capability-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          checkout="/opt/bend-host-capability-checkout-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           sudo mkdir -m 700 "$fixture"
           sudo chown 1000:1000 "$fixture"
+          sudo mkdir -m 700 "$checkout"
+          sudo cp -a "$GITHUB_WORKSPACE/." "$checkout/"
+          sudo chown -R 1000:1000 "$checkout"
           echo "HOST_CAPABILITY_FIXTURE=$fixture" >> "$GITHUB_ENV"
+          echo "HOST_CAPABILITY_CHECKOUT=$checkout" >> "$GITHUB_ENV"
       - name: Test real capabilities with UID 1000 and no effective privileges
         shell: bash
         run: |
           set -euo pipefail
           sudo setpriv --reuid=1000 --regid=1000 --clear-groups --no-new-privs \
-            python3 "$GITHUB_WORKSPACE/tools/host/fs_preflight.py" \
+            python3 "$HOST_CAPABILITY_CHECKOUT/tools/host/fs_preflight.py" \
               --fixture "$HOST_CAPABILITY_FIXTURE" \
-              --checkout "$GITHUB_WORKSPACE" \
+              --checkout "$HOST_CAPABILITY_CHECKOUT" \
               --report "$HOST_CAPABILITY_FIXTURE/evidence.json" \
               --expected-head "$GITHUB_SHA" \
               > "$RUNNER_TEMP/host-capability.log" 2>&1
