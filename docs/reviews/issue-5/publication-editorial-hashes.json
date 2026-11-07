@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "purpose": "Publication-only editorial wording and verification-access clarification; no parser, test, result or acceptance change.",
+  "original_plan_sha256": "8e1d6401f2b62a7adaa2d8e7e2611fd04d80929430f2271527748448dc257206",
+  "public_plan_sha256": "8b20f9f9dfa412c0dabb898fe6afc27e8f7aa52e90a4e9ecba4fe550b10d0531",
+  "historical_reviewed_source_hash_literals_preserved": true,
+  "pinned_producer_gate": "blocked_missing_fixture",
+  "acceptance_complete": false,
+  "files": [
+    {
+      "path": "docs/implementation/issue-5-plan.md",
+      "original_sha256": "8e1d6401f2b62a7adaa2d8e7e2611fd04d80929430f2271527748448dc257206",
+      "published_sha256": "8b20f9f9dfa412c0dabb898fe6afc27e8f7aa52e90a4e9ecba4fe550b10d0531"
+    },
+    {
+      "path": "docs/reviews/issue-5/codegen-equivalence.md",
+      "original_sha256": "5cf70493b1077a5c7ba1f324d4aff9504400682799d7d5aa3f1baa18d9fe63c8",
+      "published_sha256": "0d8475259eb65387d0620d066b3957449eae49443294955b17bafc7c77fa1420"
+    },
+    {
+      "path": "docs/reviews/issue-5/evidence-01.md",
+      "original_sha256": "07e32e5b4bbacdcdfd83785d55b5872fce056a8fa1157e373a097749227b4ce3",
+      "published_sha256": "22a6aed1e76e6a95e42581bbbb8f323c2ebdd97a3c900b40d36e45e43c81f2fd"
+    },
+    {
+      "path": "docs/reviews/issue-5/implementation-01.md",
+      "original_sha256": "dac1c321e922c4b11ec49a2dc1e959d43fa77e48a2297c49f7dd59028a633d80",
+      "published_sha256": "5abe98a0a18d6b5c910f9c5dc9749f5f28babb61714c9edaddec64be82719797"
+    },
+    {
+      "path": "docs/reviews/issue-5/implementation-02.md",
+      "original_sha256": "b5f3244b9eab0feb5d832407d8174fdc08693f8021f72d958920d85bd66eedc3",
+      "published_sha256": "5df3377208e842cfbf5972429b34574113e9aa4c23bbd8892d34eff46efd5151"
+    },
+    {
+      "path": "docs/reviews/issue-5/ownership-text-tests.md",
+      "original_sha256": "a95c0a3ed827ea0ef71ab2690da41032be680774fc286b4f2aba887320fdeede",
+      "published_sha256": "c35cbf64c76e407491a8cbf772bb9bbe3a98a2469868f04efe2aa52f27cd7de4"
+    },
+    {
+      "path": "docs/reviews/issue-5/plan-01.md",
+      "original_sha256": "19594f9067c8d0f212686c7747fd08f36b314fc6e5e66c6dae951a0489ae07a3",
+      "published_sha256": "076aa67d2695063ba884a6d34f5832f538d4930e0b975706aa42f59cb7358660"
+    },
+    {
+      "path": "docs/reviews/issue-5/positions-source-review.md",
+      "original_sha256": "11141b2b688c1a421c8c33d61f29f49c0d11e04637d214e582c467dd9c5fe5e2",
+      "published_sha256": "0183f94355b3b8da74ded5f52cbf2522de4a421e46aec7e0f184fc6edbd2f6a0"
+    },
+    {
+      "path": "docs/reviews/issue-5/source-positions.md",
+      "original_sha256": "9691459b60e271977b4144121e0bb26da7b3a79e6516b4319a8614d9c47f8026",
+      "published_sha256": "44b4d48b682d749a20c6a9dac1382b376bfac233ec47925e3cf45654f07f9017"
+    }
+  ]
+}

@@ -1,0 +1,317 @@
+{
+  "schema": 1,
+  "provenance": "Project-authored synthetic fixtures; not producer exports. Literal expectations are not computed from Expat or Bend parser acceptance.",
+  "defaultChunkModes": [
+    1,
+    7,
+    65536
+  ],
+  "fixtures": {
+    "base": {
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content><String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>B</Source><Dest>C</Dest></String></Content></SSTXMLRessources>",
+      "sourceBytes": 239,
+      "logicalBytes": 23,
+      "paramsTextBytes": 10,
+      "entryTextBytes": 13
+    },
+    "empty": {
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content></Content></SSTXMLRessources>",
+      "logicalBytes": 10
+    },
+    "reference": {
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content><String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>&#65;</Source><Dest>C</Dest></String></Content></SSTXMLRessources>",
+      "logicalBytes": 23,
+      "referenceBytes": 5
+    },
+    "fuz": {
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content><String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>B</Source><Dest>C</Dest><FuzInfo><responseId>7</responseId><Fuz>abc</Fuz></FuzInfo></String></Content></SSTXMLRessources>",
+      "logicalBytes": 27,
+      "entryTextBytes": 17,
+      "fuzCount": 1,
+      "fuzTextBytes": 3
+    }
+  },
+  "cases": [
+    {
+      "name": "depth-zero-invalid",
+      "fixture": "base",
+      "field": 1,
+      "value": 0,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "Configured depth must be positive."
+    },
+    {
+      "name": "depth-over-ceiling",
+      "fixture": "base",
+      "field": 1,
+      "value": 65,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "Configured depth cannot exceed 64."
+    },
+    {
+      "name": "base-depth-exact",
+      "fixture": "base",
+      "field": 1,
+      "value": 4,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "SSTXMLRessources/Content/String/leaf has depth four."
+    },
+    {
+      "name": "base-depth-under",
+      "fixture": "base",
+      "field": 1,
+      "value": 3,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "The String leaves require depth four."
+    },
+    {
+      "name": "fuz-depth-exact",
+      "fixture": "fuz",
+      "field": 1,
+      "value": 5,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "FuzInfo children are depth five."
+    },
+    {
+      "name": "fuz-depth-under",
+      "fixture": "fuz",
+      "field": 1,
+      "value": 4,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "FuzInfo children exceed four."
+    },
+    {
+      "name": "source-exact",
+      "fixture": "base",
+      "field": 0,
+      "value": 239,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "Ceiling equals the literal ASCII source byte count."
+    },
+    {
+      "name": "source-under",
+      "fixture": "base",
+      "field": 0,
+      "value": 238,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "Source is one byte above the configured ceiling."
+    },
+    {
+      "name": "entries-zero-empty",
+      "fixture": "empty",
+      "field": 2,
+      "value": 0,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "Empty Content is valid with zero entries allowed."
+    },
+    {
+      "name": "entries-zero-one",
+      "fixture": "base",
+      "field": 2,
+      "value": 0,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "The first String exceeds zero."
+    },
+    {
+      "name": "entries-one",
+      "fixture": "base",
+      "field": 2,
+      "value": 1,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "Exactly one String."
+    },
+    {
+      "name": "name-exact",
+      "fixture": "base",
+      "field": 5,
+      "value": 16,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "SSTXMLRessources has 16 ASCII bytes and is the longest name."
+    },
+    {
+      "name": "name-under",
+      "fixture": "base",
+      "field": 5,
+      "value": 15,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "Root name exceeds 15 bytes."
+    },
+    {
+      "name": "reference-exact",
+      "fixture": "reference",
+      "field": 6,
+      "value": 5,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "&#65; is exactly five source bytes, including delimiters."
+    },
+    {
+      "name": "reference-under",
+      "fixture": "reference",
+      "field": 6,
+      "value": 4,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "Reference closing semicolon is the fifth byte."
+    },
+    {
+      "name": "entry-text-exact",
+      "fixture": "base",
+      "field": 3,
+      "value": 13,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "List 1 + EDID 1 + REC 9 + Source 1 + Dest 1."
+    },
+    {
+      "name": "entry-text-under",
+      "fixture": "base",
+      "field": 3,
+      "value": 12,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "Aggregate entry text exceeds the ceiling by one byte."
+    },
+    {
+      "name": "params-text-exact",
+      "fixture": "base",
+      "field": 4,
+      "value": 10,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "A.esp 5 + en 2 + ja 2 + Version 1."
+    },
+    {
+      "name": "params-text-under",
+      "fixture": "base",
+      "field": 4,
+      "value": 9,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "Aggregate Params text includes Version."
+    },
+    {
+      "name": "fuz-count-exact",
+      "fixture": "fuz",
+      "field": 7,
+      "value": 1,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "One Fuz path."
+    },
+    {
+      "name": "fuz-count-under",
+      "fixture": "fuz",
+      "field": 7,
+      "value": 0,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "First Fuz exceeds zero."
+    },
+    {
+      "name": "fuz-text-exact",
+      "fixture": "fuz",
+      "field": 8,
+      "value": 3,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "abc has three UTF-8 bytes."
+    },
+    {
+      "name": "fuz-text-under",
+      "fixture": "fuz",
+      "field": 8,
+      "value": 2,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "Path exceeds two bytes."
+    },
+    {
+      "name": "fuz-entry-text-exact",
+      "fixture": "fuz",
+      "field": 3,
+      "value": 17,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "Base 13 + responseId 1 + Fuz abc 3."
+    },
+    {
+      "name": "fuz-entry-text-under",
+      "fixture": "fuz",
+      "field": 3,
+      "value": 16,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "Discarded Fuz metadata remains included."
+    },
+    {
+      "name": "logical-exact",
+      "fixture": "base",
+      "field": 9,
+      "value": 23,
+      "accepted": true,
+      "balanced": true,
+      "rationale": "Params 10 plus entry 13, independent of markup bytes."
+    },
+    {
+      "name": "logical-under",
+      "fixture": "base",
+      "field": 9,
+      "value": 22,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "One decoded byte beyond the global logical allowance."
+    },
+    {
+      "name": "work-zero-refusal",
+      "fixture": "base",
+      "field": 10,
+      "value": 0,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "Initial decoder scratch allocation requires work after Budget.start."
+    },
+    {
+      "name": "live-wrapper-only",
+      "fixture": "base",
+      "field": 11,
+      "value": 65536,
+      "accepted": false,
+      "balanced": true,
+      "rationale": "Budget wrapper fits; reader allocation cannot fit alongside it."
+    }
+  ],
+  "runtimeBoundaryChecks": [
+    {
+      "fixture": "base",
+      "field": 10,
+      "baseline": "reported WORK for same input/chunk mode",
+      "exactAccepted": true,
+      "oneUnderAccepted": false,
+      "balanced": true,
+      "note": "Includes adapter writes and output text traversal; phase5 refusal is distinct from parser rejection."
+    },
+    {
+      "fixture": "base",
+      "field": 11,
+      "baseline": "independently measured/calibrated required live charge",
+      "exactAccepted": true,
+      "oneUnderAccepted": false,
+      "balanced": true,
+      "note": "Do not claim calibration from a guessed constant; generated layout and locked resource suite are separate."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "verdict": "no_actionable_source_equivalence_finding",
+  "before_sha256": "e884b89e3cacf422a60798b806f80f3827623162fe8e351b70d87deb65bbac90",
+  "after_sha256": "7a974187dc5acae8c4de91c60715d1c41559a9e4d651dba7562e44ce0606f772",
+  "changed_functions": [
+    "retry_twice",
+    "retry_with_bytes",
+    "dispatch_phase",
+    "retained_scalar",
+    "retained_meta",
+    "eof_error",
+    "eof_neighbor"
+  ],
+  "added_helpers": [
+    "finish_reader",
+    "finish_again",
+    "resume_reader",
+    "resume_again",
+    "dispatch_entry",
+    "dispatch_start",
+    "dispatch_error",
+    "expected_source",
+    "at_position",
+    "eof_core",
+    "core_failure",
+    "no_core",
+    "eof_refusal_value",
+    "eof_neighbor_value"
+  ],
+  "unchanged_original_functions": 48,
+  "all_added_helpers_call_only_earlier_definitions": true,
+  "dispatch_equality_partition_cases": 168,
+  "retry_cases": [
+    {
+      "reader_some": false,
+      "okay": false,
+      "finish_equivalent": true,
+      "resume_equivalent": true
+    },
+    {
+      "reader_some": false,
+      "okay": true,
+      "finish_equivalent": true,
+      "resume_equivalent": true
+    },
+    {
+      "reader_some": true,
+      "okay": false,
+      "finish_equivalent": true,
+      "resume_equivalent": true
+    },
+    {
+      "reader_some": true,
+      "okay": true,
+      "finish_equivalent": true,
+      "resume_equivalent": true
+    }
+  ],
+  "text_before_sha256": "808dc7c5494bb17342a01d4af7af0c38e7d70830286508c7693d8bafd1892689",
+  "text_after_sha256": "c4f567158e59b30f19e4f20c9a02b6b74dec6ce3bf165a9e086423401bed48ad",
+  "text_only_change": "inspected reads: U32 becomes +reads: U32",
+  "native_validation": "Not performed by this equivalence review. Final lifecycle C generation has a separately reported local exit -9 blocker."
+}
