@@ -242,3 +242,24 @@ def read_u32_le(cursor: Cursor) -> Result<&2, &2, E.Error, ReadState>:
   begin(cursor,4,True{})
 def read_u32_be(cursor: Cursor) -> Result<&2, &2, E.Error, ReadState>:
   begin(cursor,4,False{})
+
+# Read-only public metadata. The window and its source/storage owners are retained.
+def window_metadata_valid(source: SourceOwner, bytes: Bytes.OwnedBytes, +base: U32, length: U32, range: Range, valid: Bool) -> ByteWindow & Result<&2, &1, E.Error, Range & U32 & U32>:
+  match valid:
+    case False{}: (ByteWindow{source,bytes,base},Fail{E.InternalInvariant{21}})
+    case True{}: (ByteWindow{source,bytes,base},Done{(range,base,length)})
+
+def window_metadata_base(source: SourceOwner, bytes: Bytes.OwnedBytes, +base: U32, +length: U32, +size: U32, range: Range, valid: Bool) -> ByteWindow & Result<&2, &1, E.Error, Range & U32 & U32>:
+  match valid:
+    case False{}: (ByteWindow{source,bytes,base},Fail{E.InternalInvariant{21}})
+    case True{}: window_metadata_valid(source,bytes,base,length,range,U32.is_le(length,U32.sub(size,base)))
+
+def window_metadata_ready(owner: SourceOwner, +base: U32, p: Bytes.OwnedBytes & U32 & U32 & U32 & U32) -> ByteWindow & Result<&2, &1, E.Error, Range & U32 & U32>:
+  match owner:
+    case Source{+run,+origin,+size,allocation}:
+      (bytes,+length,+capacity,storage_run,storage_origin) = p
+      window_metadata_base(Source{run,origin,size,allocation},bytes,base,length,size,Range{run,origin,0,size},Bool.and(U32.is_eq(run,storage_run),Bool.and(U32.is_le(base,size),Bool.and(U32.is_le(length,capacity),Bool.and(U32.is_le(1,capacity),U32.is_le(capacity,65536))))))
+
+def window_metadata(window: ByteWindow) -> ByteWindow & Result<&2, &1, E.Error, Range & U32 & U32>:
+  match window:
+    case ByteWindow{source,bytes,base}: window_metadata_ready(source,base,Bytes.metadata(bytes))

@@ -1,0 +1,43 @@
+name: Bend plugin framing
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  linux-plugin:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: API boundaries and evidence rejection controls
+        run: |
+          python3 tools/core/lint.py
+          python3 tools/plugin/lint.py
+          python3 tools/plugin/test_evidence.py
+      - name: Locked parser type, ownership and native builds
+        run: |
+          python3 tools/plugin/bootstrap.py
+          python3 tools/plugin/layout.py
+      - name: Framing contracts, fixtures and independent copy oracle
+        run: python3 tools/plugin/run.py
+      - name: Dedicated cgroup streaming and representation measurements
+        run: python3 tools/plugin/measure.py
+      - name: Require complete fresh parser evidence
+        run: python3 tools/plugin/summarize.py
+      - name: Preserve parser evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: plugin-evidence-${{ github.sha }}
+          path: |
+            build/plugin/*.json
+            runs/plugin/**/*.json
+            runs/plugin/**/stdout.log
+            runs/plugin/**/stderr.log
+          if-no-files-found: error
+          retention-days: 14

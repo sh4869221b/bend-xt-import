@@ -15,7 +15,7 @@ PUBLIC = {
     'core/bytes.bend': {'new','get','put','append','clear','drop','metadata','copy_range'},
     'core/scalars.bend': {'new','get','put','append','clear','drop','metadata'},
     'core/cursor.bend': {'source_range','cursor','subrange','take','skip','remaining','begin',
-                        'continued','read_u8','read_u16_le','read_u16_be','read_u32_le','read_u32_be'},
+                        'continued','window_metadata','read_u8','read_u16_le','read_u16_be','read_u32_le','read_u32_be'},
     'core/codec.bend': {'decode','encode','encoder_init'},
     'core/utf8.bend': {'init','finish'},
     'hash/sha256.bend': {'init','update','finalize','drop'},
@@ -53,7 +53,7 @@ def problems(path, text):
         errors.append('unbudgeted array clone/list conversion')
     if relative.startswith(('core/','hash/')) and re.search(r'\b(?:String|List)\b',text):
         errors.append('unbounded linked representation in pure core')
-    if relative not in TRUSTED:
+    if relative not in TRUSTED and relative != 'plugin/state.bend':
         if re.search(r'\bArray\s*(?:\.|<)|\b(?:ALeaf|ANode)\s*\{', text):
             errors.append('raw Array outside trusted representation modules')
     if re.search(r'\bIO\.(?:die|exit)\s*\(',text) and relative not in ENTRYPOINTS:

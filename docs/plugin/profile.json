@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "profile": "plugin-linux-x86_64-c1",
+  "backend": "Bend 2.0.40 C, locked clang-19, one worker, GPU off",
+  "scanner_shape_charge": 65536,
+  "owner_metadata_charge": 4096,
+  "maximum_group_depth": 64,
+  "maximum_source_bytes": 268435456,
+  "maximum_stored_record_payload": 33554432,
+  "maximum_records": 2000000,
+  "maximum_objects": 2000000,
+  "maximum_subrecords": 8000000,
+  "maximum_window_capacity": 65536,
+  "cgroup_memory_max": 1073741824,
+  "cgroup_swap_max": 0,
+  "baseline_margin_multiplier": 2,
+  "maximum_stream_peak_growth": 16777216,
+  "acceptance": "Requires complete fresh functional, oracle, ownership and three-run parser resource evidence. Constants alone do not certify any build, maximum workload, host or game compatibility."
+}
