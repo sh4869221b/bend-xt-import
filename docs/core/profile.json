@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "profile": "core-linux-x86_64-c1",
+  "backend": "Bend 2.0.40 C, locked clang-19, one worker, GPU off",
+  "maximum_capacity": 65536,
+  "budget_state_charge": 65536,
+  "owner_metadata_charge": 4096,
+  "bytes_min_charge": 65536,
+  "bytes_capacity_multiplier": 16,
+  "scalar_min_charge": 65536,
+  "scalar_capacity_multiplier": 32,
+  "sha_state_charge": 65536,
+  "maximum_live_charge": 268435456,
+  "cgroup_memory_max": 1073741824,
+  "cgroup_swap_max": 0,
+  "baseline_margin_multiplier": 2,
+  "maximum_stream_peak_growth": 16777216,
+  "acceptance": "Requires complete fresh functional and 3-run resource evidence; constants alone do not certify a host or build."
+}

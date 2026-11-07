@@ -1,0 +1,60 @@
+{
+  "digests": {
+    "build": "3c3ab4c1f6db05732fbbe85408f7093ee303fc590ea786e43637ac80cbb5fb51",
+    "environment": "e319adcdbc48a8c94441d21704cf0055f7ecd1d3546a610e5eecf1f5cb980d7c",
+    "layout": "f4a41a37bf4553dc4ff1acab8e5c04d6d189f3f87fa8ce3f1d346d46476582ad",
+    "functional": "9e4db1892b03d316933e8458b2f6572cb1a3fd52a5c28d86c3cddaa81d29c502",
+    "resource": "a16bbcde845f10dfff6d05a6dc883cdea06fcbff6bc489a00020e892312a4e00",
+    "summary": "290730a1aa33e337d282283d2c0bef507bd70d869fa50794310a8677273a15ac"
+  },
+  "changed_hashes": {
+    "core/budget.bend": "33bbd749063709ce7c1aa527697b8c3d07a0fbf660181ea264bc0b5fc91fe0d3",
+    "hash/sha256.bend": "bcc756f5d937fe064ff3169fae100a4afcd85fc0244bfce6ae56fcce496bf756",
+    "tests/core/cursors.bend": "6374e6069910d157ddd6d7a11772f9a4269154d1d5595a0a1028eab89b9582c4",
+    "tests/core/sha_errors.bend": "64c3542d8317354b56a1e3165539e0ace35e7feefc876c9c794cbec9a103effa"
+  },
+  "baselines": {
+    "baseline_rss_with_launcher": 13312000,
+    "baseline_cgroup": 8560640,
+    "rss_fixed_allowance": 27262976,
+    "cgroup_fixed_allowance": 18874368
+  },
+  "max_rss": 69238784,
+  "max_cgroup": 74215424,
+  "streams": {
+    "sha-1": {
+      "rss": 13312000,
+      "cgroup": 8495104
+    },
+    "sha-16": {
+      "rss": 13025280,
+      "cgroup": 8269824
+    },
+    "sha-64": {
+      "rss": 13324288,
+      "cgroup": 8384512
+    },
+    "codec-1": {
+      "rss": 13402112,
+      "cgroup": 8323072
+    },
+    "codec-16": {
+      "rss": 13066240,
+      "cgroup": 8527872
+    },
+    "codec-64": {
+      "rss": 13152256,
+      "cgroup": 8466432
+    }
+  },
+  "growth": {
+    "sha": {
+      "rss_with_launcher": 679936,
+      "cgroup_peak": 753664
+    },
+    "codec": {
+      "rss_with_launcher": 856064,
+      "cgroup_peak": 376832
+    }
+  }
+}

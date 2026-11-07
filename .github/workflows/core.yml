@@ -1,0 +1,42 @@
+name: Bend core
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  linux-core:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Core API and evidence integrity controls
+        run: |
+          python3 tools/core/lint.py
+          python3 tools/core/test_evidence.py
+      - name: Locked type, ownership, C and native builds
+        run: |
+          python3 tools/core/bootstrap.py
+          python3 tools/core/layout.py
+      - name: Native contracts and independent codec and hash oracles
+        run: python3 tools/core/run.py
+      - name: Dedicated cgroup representation and streaming measurements
+        run: python3 tools/core/measure.py
+      - name: Require complete fresh core evidence
+        run: python3 tools/core/summarize.py
+      - name: Preserve independent core evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: core-evidence-${{ github.sha }}
+          path: |
+            build/core/*.json
+            runs/core/**/*.json
+            runs/core/**/stdout.log
+            runs/core/**/stderr.log
+          if-no-files-found: error
+          retention-days: 14
