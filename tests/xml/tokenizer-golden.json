@@ -1,0 +1,455 @@
+{
+  "schema": 1,
+  "provenance": "project-authored synthetic lexical fixtures, not producer exports",
+  "layer": "XML lexer only, schema not applied",
+  "cases": [
+    {
+      "id": 1,
+      "xml": "<SSTXMLRessources/>",
+      "accepted": true,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 2,
+      "xml": " \t\n<!--x--><SSTXMLRessources/>\n<!--end--> ",
+      "accepted": true,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 3,
+      "xml": "<?xml version=\"1.0\"?><SSTXMLRessources/>",
+      "accepted": true,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 4,
+      "xml": "<?xml version = '1.0' encoding = 'utf-8' standalone = 'yes' ?><SSTXMLRessources/>",
+      "accepted": true,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 5,
+      "xml": "<?xml version=\"1.0\" standalone=\"no\"?><SSTXMLRessources/>",
+      "accepted": true,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 6,
+      "xml": "<Source>&amp;&lt;&gt;&apos;&quot;</Source>",
+      "accepted": true,
+      "text": "&<>'\"",
+      "attributes": ""
+    },
+    {
+      "id": 7,
+      "xml": "<Source>&amp;lt;</Source>",
+      "accepted": true,
+      "text": "&lt;",
+      "attributes": ""
+    },
+    {
+      "id": 8,
+      "xml": "<Source>&#13;&#xD;&#10;&#9;</Source>",
+      "accepted": true,
+      "text": "\r\r\n\t",
+      "attributes": ""
+    },
+    {
+      "id": 9,
+      "xml": "<Source><![CDATA[a<&]]]]>b</Source>",
+      "accepted": true,
+      "text": "a<&]]b",
+      "attributes": ""
+    },
+    {
+      "id": 10,
+      "xml": "<Source>]]&gt;</Source>",
+      "accepted": true,
+      "text": "]]>",
+      "attributes": ""
+    },
+    {
+      "id": 11,
+      "xml": "<Source>&#93;&#93;&gt;</Source>",
+      "accepted": true,
+      "text": "]]>",
+      "attributes": ""
+    },
+    {
+      "id": 12,
+      "xml": "<Source>a<!--drop-->b<![CDATA[c]]>d</Source>",
+      "accepted": true,
+      "text": "abcd",
+      "attributes": ""
+    },
+    {
+      "id": 13,
+      "xml": "<String List=\"&#48;\" Partial='2' sID=\"ABCDEF\"/>",
+      "accepted": true,
+      "text": "",
+      "attributes": "02ABCDEF"
+    },
+    {
+      "id": 14,
+      "xml": "<String List=\"\t\n \" sID=\"&#9;&#10;&#13;\"/>",
+      "accepted": true,
+      "text": "",
+      "attributes": "   \t\n\r"
+    },
+    {
+      "id": 15,
+      "xml": "<SSTXMLRessources>&#32;</SSTXMLRessources>",
+      "accepted": true,
+      "text": " ",
+      "attributes": ""
+    },
+    {
+      "id": 16,
+      "xml": "",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 17,
+      "xml": " ",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 18,
+      "xml": "<!--x-->",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 19,
+      "xml": "<Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 20,
+      "xml": "<Source></Source",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 21,
+      "xml": "<Source>&amp</Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 22,
+      "xml": "<Source>&#;</Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 23,
+      "xml": "<Source>&#x;</Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 24,
+      "xml": "<Source>&#X20;</Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 25,
+      "xml": "<Source>&wat;</Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 26,
+      "xml": "<Source>&#0;</Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 27,
+      "xml": "<Source>&#xD800;</Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 28,
+      "xml": "<Source>&#xFFFE;</Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 29,
+      "xml": "<Source>&#1114112;</Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 30,
+      "xml": "<Source>]]></Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 31,
+      "xml": "<Source><![CDATA[x</Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 32,
+      "xml": "<Source><!--x--x--></Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 33,
+      "xml": "<Source><!--x---></Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 34,
+      "xml": "<Source><!--x</Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 35,
+      "xml": "<Source/>x",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 36,
+      "xml": "&#32;<SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 37,
+      "xml": "<SSTXMLRessources/>&#x20;",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 38,
+      "xml": "<![CDATA[ ]]><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 39,
+      "xml": "<?target x?><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 40,
+      "xml": " <?xml version=\"1.0\"?><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 41,
+      "xml": "<?XML version=\"1.0\"?><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 42,
+      "xml": "<?xml?><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 43,
+      "xml": "<?xml version=\"1.1\"?><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 44,
+      "xml": "<?xml encoding=\"UTF-8\" version=\"1.0\"?><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 45,
+      "xml": "<?xml version=\"1.0\" version=\"1.0\"?><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 46,
+      "xml": "<?xml version=\"&#x31;.0\"?><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 47,
+      "xml": "<?xml version=\"1.0\" encoding=\"UTF&#45;8\"?><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 48,
+      "xml": "<?xml version=\"1.0\" standalone=\"&#121;es\"?><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 49,
+      "xml": "<?xml version=\"1.0\" encoding=\"UTF-16\"?><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 50,
+      "xml": "<?xml version=\"1.0\" standalone=\"yes\"encoding=\"UTF-8\"?><SSTXMLRessources/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 51,
+      "xml": "<!DOCTYPE Source SYSTEM \"file:///tmp/sentinel\"><Source/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 52,
+      "xml": "<!ENTITY x \"y\"><Source/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 53,
+      "xml": "<Unknown/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 54,
+      "xml": "<Source xmlns=\"\"/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 55,
+      "xml": "<xi:include/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 56,
+      "xml": "<String List=\"0\"Partial=\"1\"/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 57,
+      "xml": "<String List=0/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 58,
+      "xml": "<String List \"0\"/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 59,
+      "xml": "<String List=\"<\"/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 60,
+      "xml": "<String List=\"&\"/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 61,
+      "xml": "<Source/ >",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 62,
+      "xml": "<Source></Source x>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 63,
+      "xml": "<Source/><Source/>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    },
+    {
+      "id": 64,
+      "xml": "</Source>",
+      "accepted": false,
+      "text": "",
+      "attributes": ""
+    }
+  ]
+}
