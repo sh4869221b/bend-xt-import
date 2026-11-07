@@ -1,0 +1,52 @@
+name: Host filesystem capability preflight
+on:
+  push:
+    branches: [diagnostic/issue-3-fs-capability]
+permissions:
+  contents: read
+jobs:
+  filesystem-capability:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Provision one exclusively created private fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          fixture="/opt/bend-host-capability-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          sudo mkdir -m 700 "$fixture"
+          sudo chown 1000:1000 "$fixture"
+          echo "HOST_CAPABILITY_FIXTURE=$fixture" >> "$GITHUB_ENV"
+      - name: Test real capabilities with UID 1000 and no effective privileges
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo setpriv --reuid=1000 --regid=1000 --clear-groups --no-new-privs \
+            python3 "$GITHUB_WORKSPACE/tools/host/fs_preflight.py" \
+              --fixture "$HOST_CAPABILITY_FIXTURE" \
+              --checkout "$GITHUB_WORKSPACE" \
+              --report "$HOST_CAPABILITY_FIXTURE/evidence.json" \
+              --expected-head "$GITHUB_SHA" \
+              > "$RUNNER_TEMP/host-capability.log" 2>&1
+      - name: Collect capability evidence even on failure
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -n "${HOST_CAPABILITY_FIXTURE:-}" && sudo test -f "$HOST_CAPABILITY_FIXTURE/evidence.json"; then
+            sudo cp "$HOST_CAPABILITY_FIXTURE/evidence.json" "$RUNNER_TEMP/host-capability.json"
+            sudo chown "$(id -u):$(id -g)" "$RUNNER_TEMP/host-capability.json"
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: filesystem-capability-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/host-capability.json
+            ${{ runner.temp }}/host-capability.log
+          if-no-files-found: error
+          retention-days: 14
