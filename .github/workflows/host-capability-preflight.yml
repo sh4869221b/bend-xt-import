@@ -17,8 +17,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          fixture="/opt/bend-host-capability-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          checkout="/opt/bend-host-capability-checkout-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          fixture="/var/lib/bend-host-capability-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          checkout="/var/lib/bend-host-capability-checkout-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           sudo mkdir -m 700 "$fixture"
           sudo chown 1000:1000 "$fixture"
           sudo mkdir -m 700 "$checkout"

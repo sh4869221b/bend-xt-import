@@ -71,14 +71,14 @@ def check(args, record):
     require(all(int(fields[key].strip(), 16) == 0 for key in ('CapEff','CapPrm','CapInh','CapAmb')) and
             fields['NoNewPrivs'].strip() == '1', 'capabilities or no_new_privs differ')
     fixture = args.fixture.absolute()
-    require(fixture.parent == Path('/opt') and fixture.name.startswith('bend-host-capability-') and
+    require(fixture.parent == Path('/var/lib') and fixture.name.startswith('bend-host-capability-') and
             fixture.resolve(strict=True) == fixture, 'unexpected fixture path')
     require(args.report.absolute().parent == fixture and not args.report.exists(), 'report must be a new fixture file')
-    for ancestor in (Path('/'), Path('/opt')):
+    for ancestor in (Path('/'), Path('/var'), Path('/var/lib')):
         value = metadata(ancestor)
-        require(stat.S_ISDIR(value['mode']) and value['uid'] == 0 and value['mode'] & 0o022 == 0,
-                'fixture ancestor is not root-owned and protected')
         record.setdefault('ancestors', {})[str(ancestor)] = value
+        require(stat.S_ISDIR(value['mode']) and value['uid'] == 0 and value['mode'] & 0o022 == 0,
+                'fixture ancestor is not root-owned and protected: ' + str(ancestor))
     record['fixture_before'] = metadata(fixture)
     require(stat.S_ISDIR(record['fixture_before']['mode']) and
             record['fixture_before']['uid'] == record['fixture_before']['gid'] == 1000 and
