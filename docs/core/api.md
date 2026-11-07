@@ -159,3 +159,16 @@ memory; logical work does not multiply input bytes by 64 rounds. Correctness tes
 use NIST/RFC vectors and Python hashlib as independent test oracles, not production
 implementations. See [NIST's vector guidance](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/secure-hashing);
 passing these tests is not CAVP certification.
+
+## Read-only window metadata (Issue #4 addition)
+
+`cursor.window_metadata(window)` returns the same affine ByteWindow and
+`Result<&2,&1,Error,Range & U32 & U32>`. Success contains the authoritative full
+logical source range `[0,totalSize)`, absolute window base, and logical byte
+length, with the source identity retained. It checks window/byte bounds, storage
+capacity, and matching source/storage invocation runs (their allocation IDs remain
+distinct). It reads no bytes and consumes no work. Empty and end-of-source windows are valid. Failure
+also returns the window. This grants neither raw byte access, source construction,
+window rebinding, nor permission to mutate storage. A client can therefore reject
+foreign refills and distinguish the logical source end from a window end without
+trusting a caller-supplied shortened range.
