@@ -40,3 +40,14 @@ Exact source and generated-C hashes for each probe are recorded in ignored `.cac
 ## Next decision
 
 Keep the current test unchanged pending a fixed-environment comparison. If a source workaround is needed, preserve all assertions, retention across subsequent parsing and abandonment, sticky retries, cleanup and shared-budget reuse. Holding the first entry outside the repeated reader loop is a reasonable representation alternative, but is not yet an implemented or verified fix. Splitting sticky tests alone is insufficient for the already-failing retention-only probe.
+
+## Subsequent official build result
+
+PR #24 run `42338187534` successfully generated C and built the exact final
+lifecycle source hash `7a974187dc5acae8c4de91c60715d1c41559a9e4d651dba7562e44ce0606f772`
+in the fixed 4 GiB container, along with the other 12 entrypoints. The separate
+cloud comparison was not started and is no longer needed. See
+`docs/xml/build-diagnosis.md` for the run, artifact and commit identities. The
+job later failed at the layout inspector, so this result does not establish
+lifecycle runtime correctness or complete acceptance. Historical local
+failures and the causal comparisons above remain unchanged.

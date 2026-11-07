@@ -33,7 +33,135 @@ def mutations(value, changes, validator):
         rejected(lambda: validator(changed))
 
 
+
+def check_reverse_shapes():
+    """Reviewed pinned-C fixture; independent of layout's expected-line builder.
+
+    The standalone text probe uses direct moves. The full driver uses the
+    reference-count-aware equivalent. Mutations must fail for both forms.
+    No compiler, Docker runtime or untracked build file is needed by this test.
+    """
+    from layout import reverse_shape
+    direct = """INLINE Term spin_______xml_text_reverse(Env e, THR Term* o, Term r0, Term r1) {
+  u32 wpoll = 0;
+  Term _pages_0 = r0;
+  Term _acc_0 = r1;
+  WL_SPIN
+    if (term_aux(_pages_0) == CID_______xml_text_NoPages) {
+      o[0] = _acc_0;
+    } else {
+      u64 _sp_0 = term_loc(_pages_0);
+      u32 _f_0 = e.mem[_sp_0 + 0];
+      u32 _f_1 = e.mem[_sp_0 + 1];
+      Term _f_2 = e.mem[_sp_0 + 2];
+      u32 _f_3 = e.mem[_sp_0 + 3];
+      u32 _f_4 = e.mem[_sp_0 + 4];
+      u32 _f_5 = e.mem[_sp_0 + 5];
+      u32 _f_6 = e.mem[_sp_0 + 6];
+      u32 _f_7 = e.mem[_sp_0 + 7];
+      u32 _f_8 = e.mem[_sp_0 + 8];
+      u32 _f_9 = e.mem[_sp_0 + 9];
+      Term _f_10 = e.mem[_sp_0 + 10];
+      u32 _f_11 = e.mem[_sp_0 + 11];
+      u32 _f_12 = e.mem[_sp_0 + 12];
+      u32 _f_13 = e.mem[_sp_0 + 13];
+      u32 _f_14 = e.mem[_sp_0 + 14];
+      u32 _f_15 = e.mem[_sp_0 + 15];
+      u32 _f_16 = e.mem[_sp_0 + 16];
+      u32 _f_17 = e.mem[_sp_0 + 17];
+      u32 _f_18 = e.mem[_sp_0 + 18];
+      u32 _f_19 = e.mem[_sp_0 + 19];
+      Term _f_20 = e.mem[_sp_0 + 20];
+      u64 _nd_0 = _sp_0;
+      e.mem[_nd_0 + 0] = _f_0;
+      e.mem[_nd_0 + 1] = _f_1;
+      e.mem[_nd_0 + 2] = _f_2;
+      e.mem[_nd_0 + 3] = _f_3;
+      e.mem[_nd_0 + 4] = _f_4;
+      e.mem[_nd_0 + 5] = _f_5;
+      e.mem[_nd_0 + 6] = _f_6;
+      e.mem[_nd_0 + 7] = _f_7;
+      e.mem[_nd_0 + 8] = _f_8;
+      e.mem[_nd_0 + 9] = _f_9;
+      e.mem[_nd_0 + 10] = _f_10;
+      e.mem[_nd_0 + 11] = _f_11;
+      e.mem[_nd_0 + 12] = _f_12;
+      e.mem[_nd_0 + 13] = _f_13;
+      e.mem[_nd_0 + 14] = _f_14;
+      e.mem[_nd_0 + 15] = _f_15;
+      e.mem[_nd_0 + 16] = _f_16;
+      e.mem[_nd_0 + 17] = _f_17;
+      e.mem[_nd_0 + 18] = _f_18;
+      e.mem[_nd_0 + 19] = _f_19;
+      e.mem[_nd_0 + 20] = _acc_0;
+      r0 = _f_20;
+      r1 = term_ctr(CID_______xml_text_Page, _nd_0);
+      _pages_0 = r0;
+      _acc_0 = r1;
+      WL_AGAIN(spin_______xml_text_reverse);
+    }
+  break;
+  }
+  return 1;
+}"""
+    refcounted = direct.replace('Term r0, Term r1)', 'Term r0, u64 q0, Term r1, u64 q1)')
+    refcounted = refcounted.replace('  u32 wpoll = 0;', '  u32 wpoll = 0;\n  Term h0 = r0;\n  Term h1 = r1;')
+    refcounted = refcounted.replace('u64 _sp_0 = term_loc(_pages_0);',
+                                   'Term _fb_0[21];\n      u64 _sp_0 = ctr_take(e, _pages_0, 21, _fb_0);')
+    for slot in range(21):
+        refcounted = refcounted.replace(f'e.mem[_sp_0 + {slot}]', f'_fb_0[{slot}]')
+        value = '_acc_0' if slot == 20 else f'_f_{slot}'
+        refcounted = refcounted.replace(f'e.mem[_nd_0 + {slot}] = {value};',
+                                       f'e.mem[_nd_0 + {slot}] = rfc_seal(e, {value});')
+    refcounted = refcounted.replace('u64 _nd_0 = _sp_0;',
+                                   'u64 _nd_0 = _sp_0 >= HEAP_OFF ? _sp_0 : heap_alloc(e, 5);')
+    assert reverse_shape(direct) == 'direct-21-slot-page'
+    assert reverse_shape(refcounted) == 'refcount-aware-21-slot-page'
+    for body, sealed in ((direct, False), (refcounted, True)):
+        wrap = lambda value: f'rfc_seal(e, {value})' if sealed else value
+        changes = [
+            ('e.mem[_nd_0 + 20] = ' + wrap('_acc_0') + ';',
+             'e.mem[_nd_0 + 19] = ' + wrap('_acc_0') + ';'),
+            ('e.mem[_nd_0 + 20] = ' + wrap('_acc_0') + ';',
+             'e.mem[_nd_0 + 20] = ' + wrap('_f_20') + ';'),
+            ('e.mem[_nd_0 + 19] = ' + wrap('_f_19') + ';',
+             'e.mem[_nd_0 + 19] = ' + wrap('_f_18') + ';'),
+            ('r0 = _f_20;', 'r0 = _f_19;'),
+            ('r0 = _f_20;', ''),
+            ('r1 = term_ctr(CID_______xml_text_Page, _nd_0);',
+             'r1 = term_ctr(CID_______xml_text_NoPages, _nd_0);'),
+            ('_pages_0 = r0;', '_pages_0 = r1;'),
+            ('_acc_0 = r1;', '_acc_0 = r0;'),
+            ('WL_AGAIN(spin_______xml_text_reverse);', ''),
+            ('WL_AGAIN(spin_______xml_text_reverse);', 'spin_______xml_text_reverse(e, o, r0, r1);'),
+            ('if (term_aux(_pages_0) == CID_______xml_text_NoPages)',
+             'if (term_aux(_pages_0) == CID_______xml_text_Page)'),
+            ('Term _f_2 =', 'u32 _f_2 ='),
+            ('  return 1;', '  term_sink(e, _acc_0);\n  return 1;'),
+        ]
+        for before, after in changes:
+            # Parameter declarations also contain the assignment suffixes, so
+            # change the exact indented tail-hop lines rather than every match.
+            if before in ('_pages_0 = r0;', '_acc_0 = r1;'):
+                before, after = '      ' + before, '      ' + after
+            assert body.count(before) == 1, before
+            rejected(lambda: reverse_shape(body.replace(before, after)))
+    for before, after in [
+        ('Term _fb_0[21];', 'Term _fb_0[22];'),
+        ('ctr_take(e, _pages_0, 21, _fb_0)', 'ctr_take(e, _pages_0, 20, _fb_0)'),
+        ('rfc_seal(e, _acc_0)', 'rfc_seal(e, _pages_0)'),
+        ('heap_alloc(e, 5)', 'heap_alloc(e, 6)'),
+        ('_sp_0 >= HEAP_OFF ? _sp_0 :', '_sp_0 >= HEAP_OFF ? 0 :'),
+    ]:
+        assert refcounted.count(before) == 1
+        rejected(lambda: reverse_shape(refcounted.replace(before, after)))
+    # Reject a mixed direct/refcount-aware sequence as well as wholly corrupt C.
+    rejected(lambda: reverse_shape(refcounted.replace('rfc_seal(e, _acc_0)', '_acc_0')))
+    rejected(lambda: reverse_shape(direct.replace('_nd_0 + 20] = _acc_0', '_nd_0 + 20] = rfc_seal(e, _acc_0)')))
+
+
 def main():
+    check_reverse_shapes()
     valid = {'complete': True, 'inputs': {'a': 'b'}, 'build_sha256': 'c', 'environment_sha256': 'd'}
     mutations(valid, [lambda v: v.update(complete=False), lambda v: v.update(inputs={}),
                      lambda v: v.update(build_sha256='old'), lambda v: v.update(environment_sha256='old')],

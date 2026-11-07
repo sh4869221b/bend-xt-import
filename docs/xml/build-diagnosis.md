@@ -52,3 +52,24 @@ Clang compilation. The latter uses exactly the pinned CLI's CPU flags:
 This avoids retaining the JavaScript compiler heap during C optimization.
 No alternate runtime, source patch, reduced optimization, or increased native
 memory cap is used. The original reproduction branch remains unchanged.
+
+## Final-source official CI build
+
+The first PR #24 run compiled all 13 final entrypoints, including `lifecycle`
+and `stream`, and passed all eight affine negative/control checks in the
+unchanged 4 GiB build container. The downloaded `build.json` records exit zero
+for each typecheck, C generation and Clang step. The environment records a clean
+worktree at GitHub's PR test-merge commit
+`f340a5541aaf34ac9995974824ad580698527a42`, for feature head
+`16d5720d0c87c92dff96fbe35600b03fd507fb7a`. The lifecycle source hash is
+`7a974187dc5acae8c4de91c60715d1c41559a9e4d651dba7562e44ce0606f772`.
+
+- Run: https://github.com/sh4869221b/bend-xt-import/actions/runs/42338187534
+- Artifact: https://github.com/sh4869221b/bend-xt-import/actions/runs/42338187534/artifacts/13560314105
+- Artifact ZIP SHA-256: `5b90c793aabf2b97b2517f2e1571183211b8b647c1b779fa3814c5337c711b89`
+
+Thus the final-source local C-generation exit -9 is not reproduced by this
+fixed-container build. The CI job still failed afterward in the generated-C
+layout inspector at `xml_text_reverse`; the native functional and resource
+stages were skipped. Build success alone is not native validation, resource
+acceptance, or producer-fixture acceptance.
