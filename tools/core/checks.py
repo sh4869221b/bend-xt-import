@@ -14,7 +14,7 @@ MARKERS = {
         'zero-at-end','take-rejected','take-rejected','take-rejected','cursor-rejected','cursor-rejected',
         'truncation-rejected','remaining-checked'])+'\n',
     'scalar_budget': 'scalar-budget-balanced\n'*8,
-    'codec_pending': 'pending-balanced\n'*4,
+    'codec_pending': 'pending-balanced\n'*5,
     'codec_splits': 'split-balanced\n'*15,
     'sha_errors': 'sha-error-unchanged\nsha-error-unchanged\nsha-update-work-prefix-resume-abc\nsha-update-work-prefix-resume-abc\nsha-final-live-refusal-none-retry-abc\nsha-final-initialization-refusal-none-retry-abc\nsha-final-writes-refusal-some-zero-output-retry-abc\nsha-final-exact-neighbor-abc\nsha-errors-ok\n',
 }

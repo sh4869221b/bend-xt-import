@@ -2,6 +2,7 @@
 import json
 import math
 from pathlib import Path
+import re
 from integrity import invalidate_summary, ROOT, inputs, digest
 from experiment import verified_build
 from layout import inspect
@@ -35,13 +36,19 @@ def validate_oracle(oracle, current, packages):
         raise ValueError('oracle subprocess failed')
 
 
-def observation(item, build_hash, environment, binaries):
+def observation(item, build_hash, environment, binaries, seen):
     original=ROOT/item['observation']
     path=original.resolve()
-    if not path.is_relative_to((ROOT/'runs/core').resolve()) or original.is_symlink() or any(p.is_symlink() for p in original.parents if p.is_relative_to(ROOT)):
+    if path!=original or path.parent.parent!=ROOT/'runs/core' or path.name!='observation.json':
         raise ValueError('observation outside independent core runs')
     if digest(path)!=item['sha256']: raise ValueError('observation digest changed')
     row=json.loads(path.read_text())
+    if row['scratch']!=path.parent.name or not re.fullmatch(r'[0-9a-f]{64}',row['container_id']):
+        raise ValueError('observation scratch identity differs')
+    identity={path,row['container_id']}
+    if seen.intersection(identity):
+        raise ValueError('observation reused across independent core runs')
+    seen.update(identity)
     if row['build_sha256']!=build_hash or row['image_id']!=environment['images'][1]['id'] or row['lock_sha256']!=digest(ROOT/'sources.lock'):
         raise ValueError('observation build/image/lock identity differs')
     if row['runner_sha256']!=digest(ROOT/'tools/core/experiment.py') or row['entry_sha256']!=digest(ROOT/'tools/core/native_entry.py'):
@@ -52,6 +59,23 @@ def observation(item, build_hash, environment, binaries):
     args=[base64.b64decode(x,validate=True).decode() for x in row['args_base64']]
     verify_output(row['probe'],args,row['stdout'])
     return row,args
+
+
+def resource_observations(items, cases, build_hash, environment, binaries, seen):
+    expected={key(c['probe'],c['args'],c['repeat']):c for c in cases}
+    require_inventory([item['key'] for item in items],expected)
+    rows=[]
+    ordered=[]
+    for item in items:
+        case=expected[item['key']]
+        if any(item[k]!=case[k] for k in ['probe','args','group','repeat']):
+            raise ValueError('resource label differs')
+        row,args=observation(item,build_hash,environment,binaries,seen)
+        if row['probe']!=case['probe'] or args!=case['args']:
+            raise ValueError('resource invocation differs')
+        rows.append(row)
+        ordered.append(case)
+    return ordered,rows
 
 
 def live_charge(case):
@@ -112,8 +136,9 @@ def main():
     resources=json.loads((ROOT/'build/core/resource.json').read_text())
     for suite in [functional,resources]: validate_identity(suite,current,build_hash,environment_hash)
     require_inventory([x['key'] for x in functional['cases']],[key(n,a) for n,a in functional_cases()])
+    seen=set()
     for item in functional['cases']:
-        row,args=observation(item,build_hash,environment,binaries)
+        row,args=observation(item,build_hash,environment,binaries,seen)
         if item['key']!=key(row['probe'],args): raise ValueError('functional case identity differs')
     oracle_dir=(ROOT/functional['oracles']['directory']).resolve()
     if not oracle_dir.is_relative_to((ROOT/'runs/core').resolve()): raise ValueError('oracle path escaped')
@@ -128,17 +153,7 @@ def main():
         data=json.loads(path.read_text())
         if len(data[field])!=count or not all(x['pass'] for x in data[field]) or data['binary_sha256']!=digest(ROOT/'build/core'/binary):
             raise ValueError('oracle inventory/results mismatch')
-    cases=resource_cases()
-    expected={key(c['probe'],c['args'],c['repeat']):c for c in cases}
-    require_inventory([x['key'] for x in resources['cases']],expected)
-    rows=[]
-    ordered=[]
-    for item in resources['cases']:
-        case=expected[item['key']]
-        if any(item[k]!=case[k] for k in ['probe','args','group','repeat']): raise ValueError('resource label differs')
-        row,args=observation(item,build_hash,environment,binaries)
-        if row['probe']!=case['probe'] or args!=case['args']: raise ValueError('resource invocation differs')
-        rows.append(row); ordered.append(case)
+    ordered,rows=resource_observations(resources['cases'],resource_cases(),build_hash,environment,binaries,seen)
     profile=json.loads((ROOT/'docs/core/profile.json').read_text())
     summary=resource_summary(ordered,rows,profile)
     result={'schema':1,'complete':True,'profile':profile['profile'],'git_head':environment['git_head'],

@@ -7,6 +7,11 @@ from pathlib import Path
 def digest(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def observation_reference(root, directory):
+    path = directory / 'observation.json'
+    return {'observation': str(path.relative_to(root)), 'sha256': digest(path)}
+
+
 def inputs(root):
     paths=[]
     for directory in ['tools/runtime','tests/runtime']:

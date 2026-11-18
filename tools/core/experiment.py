@@ -190,7 +190,7 @@ def run_probe(name, args=(), prepare=None, fault=None, timeout=45, memory=107374
             raise RuntimeError('probe output exceeded the experiment limit')
         if hashlib.sha256(sentinel.read_bytes()).hexdigest() != before or list(published.iterdir()):
             raise AssertionError('sentinel changed or a publish artifact appeared')
-        result = {'probe': name, 'binary_sha256': binaries[name],
+        result = {'probe': name, 'container_id': cid, 'binary_sha256': binaries[name],
                   'build_sha256': hashlib.sha256((ROOT/'build/core/build.json').read_bytes()).hexdigest(),
                   'lock_sha256': hashlib.sha256((ROOT/'sources.lock').read_bytes()).hexdigest(),
                   'runner_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
