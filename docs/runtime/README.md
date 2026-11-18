@@ -24,7 +24,9 @@ Docker は `unix:///var/run/docker.sock` に限定します。endpoint/context/T
 
 `build/build.json` はソース・生成C・native binary の digest、実コマンド、所有権負例と対照の診断を含みます。`build/environment.json` は kernel、host Python、Docker、image ID です。`runs/suite-*.json` と `runs/measure-*.json` はケース一覧、個別 `observation.json` は終了状態、制限値、cgroup events、RSS/VM sampling、入出力、故障注入 trace への対応です。短命プロセスでは sampling が欠けることがあります。欠測を0として解釈しないでください。
 
-`.github/workflows/runtime-probes.yml` は同じ全 suite を実行します。Ubuntu runner label は kernel/host の完全な pin ではないため、毎回その値を記録します。実行 userland と compiler は lock に固定しています。CI artifact にはサイズを制限したログと JSON を保存し、64 MiB fixture、cache、binary、生成Cは含めません。CI job に skip fallback はありません。
+`summarize.py` は全ケースの個別観測を digest で照合し、実行引数・設定、終了結果、期待出力、対象の fixture を再検証します。集計には該当する build と、両方の全 suite が生成した `runs/` の scratch 一式が必要です。
+
+`.github/workflows/runtime-probes.yml` は全 suite の実行後、scratch が残っている間に `summarize.py` を実行します。Ubuntu runner label は kernel/host の完全な pin ではないため、毎回その値を記録します。実行 userland と compiler は lock に固定しています。CI artifact には集計 JSON、個別観測、サイズを制限したログを保存し、64 MiB fixture、cache、binary、生成Cは含めません。CI job に skip fallback はありません。
 
 全 probe は harness 所有の `runs/<case>/` の合成 fixture にだけ書き込みます。元ファイルを保つテストと、書き込みAPIを試すため意図的に変更する `P03-position` fixture は区別しています。既存 destination の sentinel と空の published directory を各試験の終了後に確認します。成功した read/write、OOM、kill 試験は **製品の atomic publication の証明ではありません**。製品の publish 経路自体がありません。
 

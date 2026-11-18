@@ -83,7 +83,7 @@ def decode_input(kind: U32, budget: B.Budget, output: Scalars.ScalarChunk, state
 def decode(kind: U32, budget: B.Budget, input: Bytes.OwnedBytes, output: Scalars.ScalarChunk, state: U8.State, start: U32) -> B.Budget & Bytes.OwnedBytes & Scalars.ScalarChunk & Progress:
   decode_input(kind,budget,output,state,start,Bytes.metadata(input))
 
-# Encoding keeps an inspected scalar pending when the destination is full.
+# Encoding keeps an inspected scalar pending when its packet cannot fit.
 # Resumption does not reread/recharge that scalar.
 type EncodeState is Data:
   EncodeReady{}
@@ -92,6 +92,8 @@ type EncodeState is Data:
 
 type EncodeProgress is Data:
   EncodeProgress{state: EncodeState, next: U32, produced: U32, status: U32}
+# Status 4 requires an output with capacity at least the pending packet's width.
+# Statuses 0..3 have the same meanings as in Progress.
 
 def packet(kind: U32, scalar: U32, offset: U32) -> Result<&2, &2, E.Error, U8.Encoded>:
   match kind:
@@ -119,16 +121,22 @@ def encode_charged(input: Scalars.ScalarChunk, output: Bytes.OwnedBytes, scalar:
     case Fail{error}: (budget,input,output,EncodeProgress{EncodeBroken{error},index,produced,2})
     case Done{u}: (budget,input,emit(output,packet,count),EncodeProgress{EncodeReady{},U32.inc(index),U32.add(produced,count),3})
 
-def encode_space(budget: B.Budget, input: Scalars.ScalarChunk, output: Bytes.OwnedBytes, scalar: U32, packet: U8.Encoded, index: U32, produced: U32, +count: U32, space: Bool) -> B.Budget & Scalars.ScalarChunk & Bytes.OwnedBytes & EncodeProgress:
+def encode_blocked(budget: B.Budget, input: Scalars.ScalarChunk, output: Bytes.OwnedBytes, state: EncodeState, index: U32, produced: U32, fits: Bool) -> B.Budget & Scalars.ScalarChunk & Bytes.OwnedBytes & EncodeProgress:
+  match fits:
+    case False{}: (budget,input,output,EncodeProgress{state,index,produced,4})
+    case True{}: (budget,input,output,EncodeProgress{state,index,produced,1})
+
+def encode_space(budget: B.Budget, input: Scalars.ScalarChunk, output: Bytes.OwnedBytes, scalar: U32, packet: U8.Encoded, index: U32, produced: U32, +count: U32, capacity: U32, space: Bool) -> B.Budget & Scalars.ScalarChunk & Bytes.OwnedBytes & EncodeProgress:
   match space:
-    case False{}: (budget,input,output,EncodeProgress{Pending{scalar,packet},index,produced,1})
+    case False{}: encode_blocked(budget,input,output,Pending{scalar,packet},index,produced,U32.is_le(count,capacity))
     case True{}: encode_charged(input,output,scalar,packet,index,produced,count,B.consume(budget,B.work(count)))
 
 def encode_output(budget: B.Budget, input: Scalars.ScalarChunk, scalar: U32, packet: U8.Encoded, index: U32, produced: U32, p: Bytes.OwnedBytes & U32 & U32 & U32 & U32) -> B.Budget & Scalars.ScalarChunk & Bytes.OwnedBytes & EncodeProgress:
   match packet:
     case U8.Encoded{+count,+a,+b,+c,+d}:
-      (output,length,capacity,run,origin) = p
-      encode_space(budget,input,output,scalar,U8.Encoded{count,a,b,c,d},index,produced,count,U32.is_le(count,U32.sub(capacity,length)))
+      (output,length,capacity0,run,origin) = p
+      +capacity = {capacity0: U32}
+      encode_space(budget,input,output,scalar,U8.Encoded{count,a,b,c,d},index,produced,count,capacity,U32.is_le(count,U32.sub(capacity,length)))
 
 def encoded_packet(budget: B.Budget, input: Scalars.ScalarChunk, output: Bytes.OwnedBytes, scalar: U32, index: U32, produced: U32, result: Result<&2, &2, E.Error, U8.Encoded>) -> B.Budget & Scalars.ScalarChunk & Bytes.OwnedBytes & EncodeProgress:
   match result:

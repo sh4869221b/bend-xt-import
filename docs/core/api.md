@@ -129,12 +129,18 @@ the [Microsoft mapping published by Unicode](https://www.unicode.org/Public/MAPP
 81/8D/8F/90/9D are undefined errors, all 251 defined bytes have an exact reverse map.
 
 `codec.encoder_init` creates the initial encode state. `encode` takes a ScalarChunk
-and OwnedBytes output. If output is full, Pending retains an already inspected
-scalar/packet; keep the same input and returned next index until it is emitted.
-Resumption charges only new output writes. A sticky error cannot be resumed as
-success. The output may contain a valid prefix, which a higher-level operation
-must not mistake for a completed field/artifact. All arrays and the budget are
-returned, including on errors.
+and OwnedBytes output. Status 0 means input exhausted, 1 means drain and clear or
+replace the output, and 2 means sticky error. Status 4 means the next packet
+exceeds the output's total capacity. Drain any output prefix and supply a buffer
+with space for the whole packet. An empty buffer with capacity 4 always has enough
+space for a pending UTF-8 packet. Call `Bytes.clear` after `Bytes.new(budget,4)`
+to obtain an empty buffer with that capacity. Status 3 is internal only.
+
+For statuses 1 and 4, resume with the returned `Pending` state, the same input,
+and the returned `next` index. The pending scalar has already been inspected.
+Resumption charges only new output writes after the packet fits. `produced`
+counts bytes added in the call, and `next` advances only after a complete packet
+is written. All arrays and the budget are returned, including on errors.
 
 ## SHA-256 and hex
 

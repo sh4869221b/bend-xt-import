@@ -1,10 +1,19 @@
 """Bind build and execution evidence to every experiment input."""
 import hashlib
 import json
-from pathlib import Path
 
 
-def digest(path): return hashlib.sha256(path.read_bytes()).hexdigest()
+def digest(path):
+    sha256 = hashlib.sha256()
+    with path.open('rb') as stream:
+        while chunk := stream.read(65536):
+            sha256.update(chunk)
+    return sha256.hexdigest()
+
+
+def observation_reference(root, directory):
+    path = directory / 'observation.json'
+    return {'observation': str(path.relative_to(root)), 'sha256': digest(path)}
 
 
 def inputs(root):

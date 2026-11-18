@@ -22,6 +22,8 @@ jobs:
         run: python3 tools/runtime/run_probes.py
       - name: Resource ceilings and representation measurements
         run: python3 tools/runtime/measure.py
+      - name: Validate and summarize the runtime observations
+        run: python3 tools/runtime/summarize.py --output-dir build/runtime-evidence
       - name: Preserve bounded experiment logs
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -29,6 +31,7 @@ jobs:
           name: runtime-evidence-${{ github.sha }}
           path: |
             build/*.json
+            build/runtime-evidence/*.json
             runs/**/*.json
             runs/**/fault.trace
             runs/**/stdout.log

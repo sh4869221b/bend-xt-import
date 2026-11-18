@@ -62,8 +62,21 @@ def verified_build():
     return binaries
 
 
-def run_probe(name, args=(), prepare=None, fault=None, timeout=45, memory=1073741824,
-              kill_after=None, rlimit_as=None, kill_signal='SIGKILL'):
+def encoded_arguments(args):
+    return [base64.b64encode(x if isinstance(x, bytes) else str(x).encode()).decode() for x in args]
+
+
+def execution_options(fault=None, timeout=45, memory=1073741824,
+                      kill_after=None, rlimit_as=None, kill_signal='SIGKILL'):
+    fault = {key: str(value) for key, value in fault.items()} if fault else None
+    return {'fault': fault, 'timeout': timeout, 'memory': memory, 'kill_after': kill_after,
+            'rlimit_as': rlimit_as, 'kill_signal': kill_signal}
+
+
+def run_probe(name, args=(), prepare=None, *, case, **options):
+    options = execution_options(**options)
+    fault, timeout, memory = (options[key] for key in ('fault', 'timeout', 'memory'))
+    kill_after, rlimit_as, kill_signal = (options[key] for key in ('kill_after', 'rlimit_as', 'kill_signal'))
     binaries = verified_build()
     if name not in binaries or name.endswith('.so'): raise ValueError('unbuilt probe')
     (ROOT / 'runs').mkdir(exist_ok=True)
@@ -80,7 +93,7 @@ def run_probe(name, args=(), prepare=None, fault=None, timeout=45, memory=107374
         raise RuntimeError('run the harness as an unprivileged user for permission probes')
     if kill_signal not in {'SIGTERM', 'SIGKILL'}:
         raise ValueError('unsupported test signal')
-    encoded = json.dumps([base64.b64encode(x if isinstance(x, bytes) else str(x).encode()).decode() for x in args])
+    encoded = encoded_arguments(args)
     container_name='bend-xt-'+directory.name
     command = ['create', '--name', container_name, '--label', 'bend-xt-experiment=issue1', '--network', 'none', '--read-only', '--cap-drop', 'ALL',
                '--security-opt', 'no-new-privileges', '--user', f'{uid}:{os.getgid()}',
@@ -97,7 +110,7 @@ def run_probe(name, args=(), prepare=None, fault=None, timeout=45, memory=107374
     if rlimit_as is not None:
         command += ['--env', f'BEND_PROBE_AS_LIMIT={int(rlimit_as)}']
     # Set LD_PRELOAD only at native exec: Python's launch barrier must not be instrumented.
-    command += [IMAGE, 'python3', '/entry.py', name, encoded, str(memory)]
+    command += [IMAGE, 'python3', '/entry.py', name, json.dumps(encoded), str(memory)]
     cid = None
     started = time.monotonic()
     attached = None
@@ -136,27 +149,29 @@ def run_probe(name, args=(), prepare=None, fault=None, timeout=45, memory=107374
         final = None
         final_cgroup = None
         while attached.poll() is None:
-            try:
-                proc = Path('/proc', str(pid), 'status').read_text()
-                item = {'elapsed': time.monotonic() - native_start,
-                        'memory_current': int((cg / 'memory.current').read_text()),
-                        'memory_peak': int((cg / 'memory.peak').read_text()),
-                        'events': counters((cg / 'memory.events').read_text())}
-                for key in ['VmRSS', 'VmHWM', 'VmSize']:
-                    match = re.search(r'^' + key + r':\s+(\d+) kB$', proc, re.M)
-                    if match:
-                        item[key + '_bytes'] = int(match[1]) * 1024
-                process_name = re.search(r'^Name:\s+(.+)$', proc, re.M)
-                item['output_lines'] = (directory / 'stdout.log').read_bytes().count(b'\n')
-                item['native_process'] = bool(process_name and process_name[1] == name[:15])
-                samples.append(item)
-            except OSError:
-                pass  # The finite lifetime of the cgroup is reflected by missing final samples.
-            if final is None and (directory / 'native-result.json').exists():
-                final = json.loads((directory / 'native-result.json').read_text())
-                final_cgroup = {'events': counters((cg / 'memory.events').read_text()),
-                                'memory_peak': int((cg / 'memory.peak').read_text())}
-                (directory / '.release').touch(exist_ok=False)
+            # The paired final capture closes the cgroup sampling timeline.
+            if final is None:
+                try:
+                    proc = Path('/proc', str(pid), 'status').read_text()
+                    item = {'elapsed': time.monotonic() - native_start,
+                            'memory_current': int((cg / 'memory.current').read_text()),
+                            'memory_peak': int((cg / 'memory.peak').read_text()),
+                            'events': counters((cg / 'memory.events').read_text())}
+                    for key in ['VmRSS', 'VmHWM', 'VmSize']:
+                        match = re.search(r'^' + key + r':\s+(\d+) kB$', proc, re.M)
+                        if match:
+                            item[key + '_bytes'] = int(match[1]) * 1024
+                    process_name = re.search(r'^Name:\s+(.+)$', proc, re.M)
+                    item['output_lines'] = (directory / 'stdout.log').read_bytes().count(b'\n')
+                    item['native_process'] = bool(process_name and process_name[1] == name[:15])
+                    samples.append(item)
+                except OSError:
+                    pass  # The finite lifetime of the cgroup is reflected by missing final samples.
+                if (directory / 'native-result.json').exists():
+                    final = json.loads((directory / 'native-result.json').read_text())
+                    final_cgroup = {'events': counters((cg / 'memory.events').read_text()),
+                                    'memory_peak': int((cg / 'memory.peak').read_text())}
+                    (directory / '.release').touch(exist_ok=False)
             elapsed = time.monotonic() - native_start
             if (directory / 'stdout.log').stat().st_size + (directory / 'stderr.log').stat().st_size > 256 * 1024:
                 docker('kill', '--signal', 'SIGKILL', cid)
@@ -178,12 +193,12 @@ def run_probe(name, args=(), prepare=None, fault=None, timeout=45, memory=107374
             raise RuntimeError('probe output exceeded the experiment limit')
         if hashlib.sha256(sentinel.read_bytes()).hexdigest() != before or list(published.iterdir()):
             raise AssertionError('sentinel changed or a publish artifact appeared')
-        result = {'probe': name, 'binary_sha256': binaries[name],
+        result = {'case': case, 'probe': name, 'options': options, 'binary_sha256': binaries[name],
                   'build_sha256': hashlib.sha256((ROOT/'build/build.json').read_bytes()).hexdigest(),
                   'lock_sha256': hashlib.sha256((ROOT/'sources.lock').read_bytes()).hexdigest(),
                   'runner_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                   'entry_sha256': hashlib.sha256((ROOT/'tools/runtime/native_entry.py').read_bytes()).hexdigest(),
-                  'kernel': platform.release(), 'args_base64': json.loads(encoded), 'exit': state['ExitCode'],
+                  'kernel': platform.release(), 'args_base64': encoded, 'exit': state['ExitCode'],
                   'docker_client_exit': attached.returncode, 'oom_killed': state['OOMKilled'],
                   'timed_out': timed_out, 'external_kill': killed, 'limits': limits,
                   'events_before': events_before, 'samples': samples,

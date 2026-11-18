@@ -88,35 +88,58 @@ def pending(width: U32, work: U32, p: B.Budget & S.ScalarChunk & Bytes.OwnedByte
     case Codec.EncodeProgress{Codec.Pending{value,packet},0,0,1}: full_dropped(scalars,Codec.Pending{value,packet},width,work,Bytes.drop(budget,output))
     case _: IO.die(Unit,70,"expected pending output-full")
 
-def full_created(scalars: S.ScalarChunk, width: U32, work: U32, p: B.Budget & Result<&2, &1, E.Error, Bytes.OwnedBytes>) -> IO(Unit):
+def undersized_output(scalars: S.ScalarChunk, state: Codec.EncodeState, budget: B.Budget, work: U32, p: Bytes.OwnedBytes & U32 & U32 & U32 & U32) -> IO(Unit):
+  match p:
+    case (output,0,2,run,origin): full_dropped(scalars,state,4,work,Bytes.drop(budget,output))
+    case _: IO.die(Unit,70,"undersized output changed")
+
+def undersized_again(work: U32, p: B.Budget & S.ScalarChunk & Bytes.OwnedBytes & Codec.EncodeProgress) -> IO(Unit):
+  (budget,scalars,output,progress) = p
+  match progress:
+    case Codec.EncodeProgress{Codec.Pending{value,packet},0,0,4}: undersized_output(scalars,Codec.Pending{value,packet},budget,work,Bytes.metadata(output))
+    case _: IO.die(Unit,70,"undersized retry must request larger output")
+
+def undersized(work: U32, p: B.Budget & S.ScalarChunk & Bytes.OwnedBytes & Codec.EncodeProgress) -> IO(Unit):
+  (budget,scalars,output,progress) = p
+  match progress:
+    case Codec.EncodeProgress{Codec.Pending{value,packet},0,0,4}: undersized_again(work,Codec.encode(0,budget,scalars,output,Codec.Pending{value,packet},0))
+    case _: IO.die(Unit,70,"expected larger output request")
+
+def encode_initial(scalars: S.ScalarChunk, budget: B.Budget, output: Bytes.OwnedBytes, width: U32, work: U32, small: Bool) -> IO(Unit):
+  match small:
+    case True{}: undersized(work,Codec.encode(0,budget,scalars,Bytes.clear(output),Codec.encoder_init(),0))
+    case False{}: pending(width,work,Codec.encode(0,budget,scalars,output,Codec.encoder_init(),0))
+
+def full_created(scalars: S.ScalarChunk, width: U32, work: U32, small: Bool, p: B.Budget & Result<&2, &1, E.Error, Bytes.OwnedBytes>) -> IO(Unit):
   (budget,r) = p
   match r:
-    case Done{output}: pending(width,work,Codec.encode(0,budget,scalars,output,Codec.encoder_init(),0))
+    case Done{output}: encode_initial(scalars,budget,output,width,work,small)
     case _: IO.die(Unit,70,"output new")
 
-def scalar_written(width: U32, work: U32, p: B.Budget & S.ScalarChunk & Result<&2, &2, E.Error, Unit>) -> IO(Unit):
+def scalar_written(+width: U32, work: U32, +initial: U32, p: B.Budget & S.ScalarChunk & Result<&2, &2, E.Error, Unit>) -> IO(Unit):
   (budget,scalars,r) = p
   match r:
-    case Done{u}: full_created(scalars,width,work,Bytes.new(budget,1))
+    case Done{u}: full_created(scalars,width,work,U32.is_lt(initial,width),Bytes.new(budget,initial))
     case _: IO.die(Unit,70,"scalar write")
 
-def scalar_created(value: U32, width: U32, work: U32, p: B.Budget & Result<&2, &1, E.Error, S.ScalarChunk>) -> IO(Unit):
+def scalar_created(value: U32, width: U32, work: U32, initial: U32, p: B.Budget & Result<&2, &1, E.Error, S.ScalarChunk>) -> IO(Unit):
   (budget,r) = p
   match r:
-    case Done{scalars}: scalar_written(width,work,S.put(budget,scalars,0,value))
+    case Done{scalars}: scalar_written(width,work,initial,S.put(budget,scalars,0,value))
     case _: IO.die(Unit,70,"scalar new")
 
-def started(value: U32, width: U32, work: U32, r: Result<&2, &1, E.Error, B.Budget>) -> IO(Unit):
+def started(value: U32, width: U32, work: U32, initial: U32, r: Result<&2, &1, E.Error, B.Budget>) -> IO(Unit):
   match r:
-    case Done{budget}: scalar_created(value,width,work,S.new(budget,1))
+    case Done{budget}: scalar_created(value,width,work,initial,S.new(budget,1))
     case _: IO.die(Unit,70,"start")
 
-def run(value: U32, width: U32, +work: U32) -> IO(Unit):
-  started(value,width,work,B.start(1,B.Six{0,0,0,0,1048576,work}))
+def run(value: U32, width: U32, +work: U32, initial: U32) -> IO(Unit):
+  started(value,width,work,initial,B.start(1,B.Six{0,0,0,0,1048576,work}))
 
 def main() -> IO(Unit):
   do IO<Unit>:
-    run(97,1,7)
-    run(233,2,12)
-    run(26085,3,18)
-    run(128512,4,22)
+    run(97,1,7,1)
+    run(233,2,13,2)
+    run(26085,3,21,3)
+    run(128512,4,25,4)
+    run(128512,4,23,2)

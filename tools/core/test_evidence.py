@@ -1,9 +1,14 @@
 """Regression checks for evidence rejection; these do not emulate OS acceptance."""
+import base64
 import copy
+import json
 import tempfile
 from pathlib import Path
-from integrity import inputs, FILES, DIRECTORIES, invalidate_summary
+from unittest.mock import patch
+from integrity import digest, inputs, FILES, DIRECTORIES, invalidate_summary
+import summarize
 from summarize import require_inventory, validate_identity, validate_binary, validate_oracle
+from case_spec import key, resource_cases
 from checks import check_observation, memory_expectation, verify_output
 
 
@@ -15,6 +20,45 @@ def rejected(fn):
     try: fn()
     except (ValueError,AssertionError,KeyError,RuntimeError): return
     raise AssertionError('invalid evidence accepted')
+
+
+def test_independent_repetitions(root, valid_observation):
+    cases=resource_cases()[:3]
+    environment={'images':[{}, {'id':'probe-image'}]}
+    items=[]
+    for case in cases:
+        repeat=case['repeat']
+        path=root/'runs/core'/f'memory-{repeat}'/'observation.json'
+        path.parent.mkdir(parents=True)
+        row={**valid_observation,'probe':'memory','binary_sha256':'binary','build_sha256':'build',
+             'image_id':'probe-image','lock_sha256':digest(root/'sources.lock'),
+             'runner_sha256':digest(root/'tools/core/experiment.py'),
+             'entry_sha256':digest(root/'tools/core/native_entry.py'),
+             'args_base64':[base64.b64encode(arg.encode()).decode() for arg in case['args']],
+             'stdout':memory_expectation(*map(int,case['args']))[0],
+             'scratch':path.parent.name,'container_id':f'{repeat:064x}'}
+        path.write_text(json.dumps(row))
+        items.append({**case,'key':key(case['probe'],case['args'],repeat),
+                      'observation':str(path.relative_to(root)),'sha256':digest(path)})
+
+    def load(entries):
+        return summarize.resource_observations(entries,cases,'build',environment,{'memory':'binary'},set())
+
+    first, second, *_=items
+    with patch.object(summarize,'ROOT',root):
+        ordered,rows=load(items)
+        assert ordered==cases and len({row['container_id'] for row in rows})==3
+        reused=[{**item,'observation':first['observation'],'sha256':first['sha256']} for item in items]
+        rejected(lambda:load(reused))
+        alias={**second,'observation':'runs/core/memory-1/../memory-0/observation.json','sha256':first['sha256']}
+        rejected(lambda:load([first,alias,items[2]]))
+        path=root/second['observation']
+        copied=json.loads((root/first['observation']).read_text())
+        path.write_text(json.dumps(copied))
+        rejected(lambda:load([first,{**second,'sha256':digest(path)},items[2]]))
+        copied['scratch']=path.parent.name
+        path.write_text(json.dumps(copied))
+        rejected(lambda:load([first,{**second,'sha256':digest(path)},items[2]]))
 
 
 def main():
@@ -73,6 +117,9 @@ def main():
         target=root/'build/core/summary.json';target.parent.mkdir(parents=True);target.write_text('{"complete":true}')
         invalidate_summary(root)
         assert '"complete":false' in target.read_text()
-    print(f'{COUNT} evidence rejection regressions and 8 positive controls passed')
+        for name in ['experiment','native_entry']:
+            (root/'tools/core'/f'{name}.py').write_text('fixture')
+        test_independent_repetitions(root,row)
+    print(f'{COUNT} evidence rejection regressions and 9 positive controls passed')
 
 if __name__ == '__main__': main()
