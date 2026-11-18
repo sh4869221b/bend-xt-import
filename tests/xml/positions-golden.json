@@ -1,0 +1,730 @@
+{
+  "schema": 1,
+  "provenance": "Project-authored synthetic source-position fixtures. Coordinates are literal source byte offsets and one-based XML lines/scalar columns, not values sampled from the implementation.",
+  "cases": [
+    {
+      "id": 1,
+      "xml": "﻿<?xml version=\"1.0\"?>\r\n<SSTXMLRessources>\r\n<Params><Addon>日本.esp</Addon>\r<Source>en</Source><Dest>ja</Dest><Version>2</Version></Params>\n<Content>\r\n<String List=\"0\"><EDID>A&#x42;C</EDID><REC>WEAP:FULL</REC>\r\n<Source>日&amp;<![CDATA[😀\r\nZ]]>x&#13;</Source>\r<Dest>訳<!--中--><![CDATA[語\r]]>&#10;</Dest><FuzInfo><Fuz>声\r\nx</Fuz><responseId>7</responseId></FuzInfo></String>\n<String List=\"1\"><Dest/><EDID>Empty</EDID><Source></Source><REC>BOOK:DESC</REC></String></Content></SSTXMLRessources>\r",
+      "bytes": 503,
+      "spans": {
+        "Params1/Addon1": [
+          [
+            54,
+            3,
+            9
+          ],
+          [
+            79,
+            3,
+            30
+          ]
+        ],
+        "Params1/Source1": [
+          [
+            80,
+            4,
+            1
+          ],
+          [
+            99,
+            4,
+            20
+          ]
+        ],
+        "Params1/Dest1": [
+          [
+            99,
+            4,
+            20
+          ],
+          [
+            114,
+            4,
+            35
+          ]
+        ],
+        "Params1": [
+          [
+            46,
+            3,
+            1
+          ],
+          [
+            143,
+            4,
+            64
+          ]
+        ],
+        "Content1/String1/EDID1": [
+          [
+            172,
+            6,
+            18
+          ],
+          [
+            193,
+            6,
+            39
+          ]
+        ],
+        "Content1/String1/Source1": [
+          [
+            215,
+            7,
+            1
+          ],
+          [
+            265,
+            8,
+            20
+          ]
+        ],
+        "Content1/String1/Dest1": [
+          [
+            266,
+            9,
+            1
+          ],
+          [
+            313,
+            10,
+            16
+          ]
+        ],
+        "Content1/String1/FuzInfo1": [
+          [
+            313,
+            10,
+            16
+          ],
+          [
+            375,
+            11,
+            44
+          ]
+        ],
+        "Content1/String1": [
+          [
+            155,
+            6,
+            1
+          ],
+          [
+            384,
+            11,
+            53
+          ]
+        ],
+        "Content1/String2/Dest1": [
+          [
+            402,
+            12,
+            18
+          ],
+          [
+            409,
+            12,
+            25
+          ]
+        ],
+        "Content1/String2/EDID1": [
+          [
+            409,
+            12,
+            25
+          ],
+          [
+            427,
+            12,
+            43
+          ]
+        ],
+        "Content1/String2/Source1": [
+          [
+            427,
+            12,
+            43
+          ],
+          [
+            444,
+            12,
+            60
+          ]
+        ],
+        "Content1/String2": [
+          [
+            385,
+            12,
+            1
+          ],
+          [
+            473,
+            12,
+            89
+          ]
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "xml": "<!--日😀-->\n<SSTXMLRessources><Content><String List=\"2\"><Source><![CDATA[\rA]]></Source><Dest>&#10;😀</Dest><REC>INFO:NAM1</REC><EDID>ID</EDID><FuzInfo><responseId>0</responseId><Fuz/></FuzInfo></String></Content>\r\n<Params><Version>2</Version><Dest>日</Dest><Addon>A&amp;B.esp</Addon><Source>en</Source></Params></SSTXMLRessources>",
+      "bytes": 336,
+      "spans": {
+        "Content1/String1/Source1": [
+          [
+            59,
+            2,
+            45
+          ],
+          [
+            90,
+            3,
+            14
+          ]
+        ],
+        "Content1/String1/Dest1": [
+          [
+            90,
+            3,
+            14
+          ],
+          [
+            112,
+            3,
+            33
+          ]
+        ],
+        "Content1/String1/EDID1": [
+          [
+            132,
+            3,
+            53
+          ],
+          [
+            147,
+            3,
+            68
+          ]
+        ],
+        "Content1/String1/FuzInfo1": [
+          [
+            147,
+            3,
+            68
+          ],
+          [
+            198,
+            3,
+            119
+          ]
+        ],
+        "Content1/String1": [
+          [
+            42,
+            2,
+            28
+          ],
+          [
+            207,
+            3,
+            128
+          ]
+        ],
+        "Params1/Dest1": [
+          [
+            247,
+            4,
+            29
+          ],
+          [
+            263,
+            4,
+            43
+          ]
+        ],
+        "Params1/Addon1": [
+          [
+            263,
+            4,
+            43
+          ],
+          [
+            289,
+            4,
+            69
+          ]
+        ],
+        "Params1/Source1": [
+          [
+            289,
+            4,
+            69
+          ],
+          [
+            308,
+            4,
+            88
+          ]
+        ],
+        "Params1": [
+          [
+            219,
+            4,
+            1
+          ],
+          [
+            317,
+            4,
+            97
+          ]
+        ]
+      }
+    }
+  ],
+  "reference_eof": [
+    {
+      "name": "content-eof-0",
+      "xml": "﻿<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\r\n<String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>日😀\r&",
+      "diagnostic": [
+        2,
+        6,
+        1,
+        190,
+        3,
+        1
+      ],
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        123,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "content-eof-1",
+      "xml": "﻿<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\r\n<String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>日😀\r&amp",
+      "diagnostic": [
+        2,
+        6,
+        1,
+        190,
+        3,
+        1
+      ],
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        123,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "content-eof-2",
+      "xml": "﻿<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\r\n<String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>日😀\r&#",
+      "diagnostic": [
+        2,
+        6,
+        1,
+        190,
+        3,
+        1
+      ],
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        123,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "content-eof-3",
+      "xml": "﻿<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\r\n<String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>日😀\r&#x",
+      "diagnostic": [
+        2,
+        6,
+        1,
+        190,
+        3,
+        1
+      ],
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        123,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "content-eof-4",
+      "xml": "﻿<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\r\n<String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>日😀\r&#12",
+      "diagnostic": [
+        2,
+        6,
+        1,
+        190,
+        3,
+        1
+      ],
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        123,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "content-eof-5",
+      "xml": "﻿<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\r\n<String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>日😀\r&#x1F600",
+      "diagnostic": [
+        2,
+        6,
+        1,
+        190,
+        3,
+        1
+      ],
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        123,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "attribute-eof-6",
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\n<String List=\"&",
+      "diagnostic": [
+        2,
+        6,
+        1,
+        133,
+        2,
+        15
+      ],
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        119,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "attribute-eof-7",
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\n<String List=\"&amp",
+      "diagnostic": [
+        2,
+        6,
+        1,
+        133,
+        2,
+        15
+      ],
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        119,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "attribute-eof-8",
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\n<String List=\"&#",
+      "diagnostic": [
+        2,
+        6,
+        1,
+        133,
+        2,
+        15
+      ],
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        119,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "attribute-eof-9",
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\n<String List=\"&#x",
+      "diagnostic": [
+        2,
+        6,
+        1,
+        133,
+        2,
+        15
+      ],
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        119,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "attribute-eof-10",
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\n<String List=\"&#48",
+      "diagnostic": [
+        2,
+        6,
+        1,
+        133,
+        2,
+        15
+      ],
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        119,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "reference-terminal-cr",
+      "xml": "﻿<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\r<String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>日&amp\r",
+      "diagnostic": [
+        2,
+        4,
+        1,
+        184,
+        2,
+        61
+      ],
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        122,
+        2,
+        1
+      ]
+    }
+  ],
+  "neighbors": [
+    {
+      "name": "live-one-under",
+      "fixture": 0,
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content><String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>B</Source><Dest>C</Dest></String></Content></SSTXMLRessources>",
+      "chunk": 7,
+      "override": [
+        11,
+        552959
+      ],
+      "expected": {
+        "kind": "error",
+        "diagnostic": [
+          4,
+          6,
+          1,
+          201,
+          1,
+          202
+        ]
+      },
+      "source": [
+        1,
+        42
+      ],
+      "entryStart": [
+        118,
+        1,
+        119
+      ]
+    },
+    {
+      "name": "live-exact",
+      "fixture": 0,
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content><String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>B</Source><Dest>C</Dest></String></Content></SSTXMLRessources>",
+      "chunk": 7,
+      "override": [
+        11,
+        552960
+      ],
+      "expected": {
+        "kind": "ok",
+        "count": 1,
+        "digest": 19054367,
+        "logical": 23
+      }
+    },
+    {
+      "name": "second-source-reference",
+      "fixture": 3,
+      "xml": "﻿<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content>\r\n<String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>日😀\r&amp",
+      "chunk": 7,
+      "override": [],
+      "expected": {
+        "kind": "error",
+        "diagnostic": [
+          2,
+          6,
+          1,
+          190,
+          3,
+          1
+        ]
+      },
+      "source": [
+        7,
+        43
+      ],
+      "entryStart": [
+        123,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "second-source-schema",
+      "fixture": 3,
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content><String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>B</Source><Dest>C</Dest></String></Content></SSTXMLRessources>",
+      "chunk": 7,
+      "override": [
+        2,
+        0
+      ],
+      "expected": {
+        "kind": "error",
+        "diagnostic": [
+          3,
+          7,
+          0,
+          118,
+          1,
+          119
+        ]
+      },
+      "source": [
+        7,
+        43
+      ],
+      "entryStart": [
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "second-source-invalid-depth",
+      "fixture": 3,
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content><String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>B</Source><Dest>C</Dest></String></Content></SSTXMLRessources>",
+      "chunk": 7,
+      "override": [
+        1,
+        0
+      ],
+      "expected": {
+        "kind": "error",
+        "diagnostic": [
+          4,
+          2,
+          0,
+          0,
+          1,
+          1
+        ]
+      },
+      "source": [
+        7,
+        43
+      ],
+      "entryStart": [
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "second-source-wrapper-refusal",
+      "fixture": 3,
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content><String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>B</Source><Dest>C</Dest></String></Content></SSTXMLRessources>",
+      "chunk": 7,
+      "override": [
+        11,
+        65536
+      ],
+      "expected": {
+        "kind": "error",
+        "diagnostic": [
+          4,
+          1,
+          0,
+          0,
+          1,
+          1
+        ]
+      },
+      "source": [
+        7,
+        43
+      ],
+      "entryStart": [
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "second-source-input-init",
+      "fixture": 4,
+      "xml": "<SSTXMLRessources><Params><Addon>A.esp</Addon><Source>en</Source><Dest>ja</Dest><Version>2</Version></Params><Content><String List=\"0\"><EDID>A</EDID><REC>WEAP:FULL</REC><Source>B</Source><Dest>C</Dest></String></Content></SSTXMLRessources>",
+      "chunk": 7,
+      "override": [],
+      "expected": {
+        "kind": "error",
+        "diagnostic": [
+          1,
+          2,
+          0,
+          0,
+          1,
+          1
+        ]
+      },
+      "source": [
+        7,
+        43
+      ],
+      "entryStart": [
+        0,
+        1,
+        1
+      ]
+    }
+  ]
+}

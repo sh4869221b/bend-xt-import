@@ -1,0 +1,40 @@
+name: Bend XML
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  linux-xml:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Pure XML and ownership boundaries
+        run: |
+          python3 tools/core/lint.py
+          python3 tools/xml/lint.py
+          python3 tools/xml/test_evidence.py
+      - name: Locked XML build
+        run: python3 tools/xml/bootstrap.py
+      - name: Technical XML validation (producer acceptance reported separately)
+        run: |
+          python3 tools/xml/run.py
+          python3 tools/xml/measure.py
+          python3 tools/xml/summarize.py
+      - name: Preserve XML evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: xml-evidence-${{ github.sha }}
+          path: |
+            build/xml/*.json
+            runs/xml/**/*.json
+            runs/xml/**/stdout.log
+            runs/xml/**/stderr.log
+          if-no-files-found: error
+          retention-days: 14

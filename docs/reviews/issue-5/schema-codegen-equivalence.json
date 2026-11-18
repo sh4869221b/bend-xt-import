@@ -1,0 +1,88 @@
+{
+  "original_sha256": "2590a4740960bd459bc9e39f9af65cbdf68e1a56f5aff3a96cbc31883e1bcc9b",
+  "candidate_sha256": "386b3a16ad3f1b84b53b26c0e4b361c60dafd6bdce65c3815a367493e7b1fbdb",
+  "rewritten": [
+    {
+      "function": "depth",
+      "arms": 9,
+      "partitions": 24
+    },
+    {
+      "function": "allowed",
+      "arms": 16,
+      "partitions": 98
+    },
+    {
+      "function": "element_bit",
+      "arms": 13,
+      "partitions": 55
+    },
+    {
+      "function": "attribute_allowed",
+      "arms": 6,
+      "partitions": 18
+    },
+    {
+      "function": "attr_assigned",
+      "arms": 7,
+      "partitions": 12
+    },
+    {
+      "function": "classify",
+      "arms": 3,
+      "partitions": 4
+    },
+    {
+      "function": "field_assigned",
+      "arms": 7,
+      "partitions": 15
+    },
+    {
+      "function": "close_field",
+      "arms": 4,
+      "partitions": 18
+    },
+    {
+      "function": "required_text",
+      "arms": 7,
+      "partitions": 21
+    },
+    {
+      "function": "start_valid",
+      "arms": 3,
+      "partitions": 4
+    },
+    {
+      "function": "retained",
+      "arms": 7,
+      "partitions": 15
+    },
+    {
+      "function": "leaf_limit",
+      "arms": 8,
+      "partitions": 32
+    },
+    {
+      "function": "field_character",
+      "arms": 4,
+      "partitions": 12
+    },
+    {
+      "function": "leaf_semantics",
+      "arms": 4,
+      "partitions": 12
+    },
+    {
+      "function": "stored_action",
+      "arms": 3,
+      "partitions": 4
+    }
+  ],
+  "numeric_bool_partition_cases": 344,
+  "all_original_headers_identical": true,
+  "non_rewritten_definitions_identical": true,
+  "types_imports_identical": true,
+  "new_helpers": 86,
+  "forward_calls": 0,
+  "findings": []
+}

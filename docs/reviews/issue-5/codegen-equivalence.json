@@ -1,0 +1,114 @@
+{
+  "original_sha256": "b76b35e93a37ca673730de8a09e3b10533419b1ed32cddfb158c797ad238227e",
+  "candidate_sha256": "df557a0a10228956272e79a91b09af3745cc3fda8eed5f896c142bf99574a965",
+  "rewritten": [
+    {
+      "function": "open_delimiter",
+      "arms": 4,
+      "partitions": 6
+    },
+    {
+      "function": "attr_selected",
+      "arms": 3,
+      "partitions": 4
+    },
+    {
+      "function": "attr_equals",
+      "arms": 3,
+      "partitions": 4
+    },
+    {
+      "function": "attr_quote",
+      "arms": 4,
+      "partitions": 6
+    },
+    {
+      "function": "close_space",
+      "arms": 3,
+      "partitions": 4
+    },
+    {
+      "function": "comment",
+      "arms": 4,
+      "partitions": 6
+    },
+    {
+      "function": "cdata_prefix",
+      "arms": 3,
+      "partitions": 4
+    },
+    {
+      "function": "cdata",
+      "arms": 7,
+      "partitions": 12
+    },
+    {
+      "function": "reference_body",
+      "arms": 7,
+      "partitions": 15
+    },
+    {
+      "function": "reference_valid",
+      "arms": 3,
+      "partitions": 4
+    },
+    {
+      "function": "decl_xml",
+      "arms": 3,
+      "partitions": 4
+    },
+    {
+      "function": "decl_space",
+      "arms": 5,
+      "partitions": 12
+    },
+    {
+      "function": "decl_allowed",
+      "arms": 5,
+      "partitions": 16
+    },
+    {
+      "function": "decl_selected",
+      "arms": 3,
+      "partitions": 4
+    },
+    {
+      "function": "decl_equals",
+      "arms": 3,
+      "partitions": 4
+    },
+    {
+      "function": "decl_quote",
+      "arms": 4,
+      "partitions": 6
+    },
+    {
+      "function": "decl_char",
+      "arms": 14,
+      "partitions": 72
+    },
+    {
+      "function": "decl_variant",
+      "arms": 3,
+      "partitions": 12
+    },
+    {
+      "function": "decl_length",
+      "arms": 5,
+      "partitions": 12
+    },
+    {
+      "function": "decl_after",
+      "arms": 3,
+      "partitions": 4
+    }
+  ],
+  "numeric_bool_partition_cases": 211,
+  "close_end_cases": 9,
+  "all_original_headers_identical": true,
+  "non_rewritten_definitions_identical": true,
+  "types_imports_identical": true,
+  "new_helpers": 72,
+  "forward_calls": 0,
+  "findings": []
+}

@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "scope": "Independent source and literal-fixture review, not native or locked evidence",
+  "lifecycle_sha256": "e884b89e3cacf422a60798b806f80f3827623162fe8e351b70d87deb65bbac90",
+  "positions_probe_sha256": "48ec57d77bc68fe2545460de9623f638ffbee359d6c123e30abc12ed0d2e309a",
+  "manifest_sha256": "422b9fd2dbb2c0b6221a39399792d6de9817f8820ad56117bc9314d3399c98b8",
+  "checks": {
+    "populated_metadata_spans": 22,
+    "field_references": 15,
+    "reference_opening_positions": 12,
+    "diagnostic_source_and_entry_start_literals": 18,
+    "lifecycle_abandonment_cuts": 392,
+    "retained_first_scalars": [
+      65,
+      26085,
+      10,
+      38,
+      120,
+      128512,
+      10
+    ],
+    "distinct_second_scalars": [
+      66,
+      90,
+      81
+    ],
+    "eof_pending_cr_at": [
+      178,
+      1,
+      179
+    ],
+    "eof_after_cr_at": [
+      179,
+      2,
+      1
+    ],
+    "eof_entry_start": [
+      118,
+      1,
+      119
+    ]
+  },
+  "findings": []
+}

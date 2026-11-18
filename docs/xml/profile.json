@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "profile": "xml-linux-x86_64-c1",
+  "backend": "Bend 2.0.40 C, locked clang-19, one worker, GPU off",
+  "reader_shape_charge": 65536,
+  "entry_shape_charge": 4096,
+  "link_shape_charge": 4096,
+  "text_page_scalars": 4096,
+  "maximum_source_bytes": 67108864,
+  "maximum_entry_text_bytes": 1048576,
+  "maximum_entries": 200000,
+  "maximum_schema_depth": 5,
+  "maximum_configured_depth": 64,
+  "cgroup_memory_max": 1073741824,
+  "cgroup_swap_max": 0,
+  "resource_repeats": 3,
+  "baseline_margin_multiplier": 2,
+  "maximum_stream_peak_growth": 16777216,
+  "producer_export": "blocked_missing_fixture",
+  "acceptance": "Locked technical validation is separate from Issue #5 acceptance. An intact pinned-producer capture with verified build identity and permitted verification access is still required. Redistribution permission is required only if its bytes are distributed. No local native cache or synthetic source can satisfy that producer gate."
+}
