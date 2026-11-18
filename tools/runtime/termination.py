@@ -8,6 +8,12 @@ def assert_equal(actual, expected):
         raise AssertionError(f'expected {expected!r}, observed {actual!r}')
 
 
+def checked_uint(value, maximum, field):
+    if type(value) is not int or not 0 <= value <= maximum:
+        raise AssertionError(f'{field} must be an integer in 0..{maximum}')
+    return value
+
+
 def check_termination(row, expected, termination):
     oom = termination == 'oom'
     timed_out = termination == 'timeout'
@@ -15,10 +21,12 @@ def check_termination(row, expected, termination):
     native_signal = {'exit': None, 'oom': signal.SIGKILL, 'SIGKILL': signal.SIGKILL,
                      'SIGTERM': signal.SIGTERM, 'timeout': signal.SIGKILL}[termination]
     supervised_signal = native_signal.name if external else None
-    assert_equal(row['exit'], expected)
-    assert_equal(row['docker_client_exit'], expected)
-    assert_equal((row['oom_killed'], row['timed_out'], row['external_kill'], row['kill_signal']),
-                 (oom, timed_out, external, supervised_signal))
+    for field in ('exit', 'docker_client_exit'):
+        assert_equal(checked_uint(row[field], 255, field), expected)
+    for field, flag in (('oom_killed', oom), ('timed_out', timed_out), ('external_kill', external)):
+        if row[field] is not flag:
+            raise AssertionError(f'{field}: expected boolean {flag}, observed {row[field]!r}')
+    assert_equal(row['kill_signal'], supervised_signal)
 
     native = row['native_result']
     final = row['final_cgroup']
@@ -41,7 +49,14 @@ def check_termination(row, expected, termination):
         if native_signal != signal.SIGKILL:
             raise AssertionError('native exit evidence is missing')
         return
-    assert_equal(native['exit'], expected)
+    assert_equal(checked_uint(native['exit'], 255, 'native_result.exit'), expected)
+    if native['signal'] is not None and type(native['signal']) is not int:
+        raise AssertionError('native_result.signal must be an integer or null')
     assert_equal(native['signal'], native_signal)
+    status = checked_uint(native['wait_status'], 65535, 'native_result.wait_status')
     wait_exit = expected if native_signal is None else -native_signal
-    assert_equal(os.waitstatus_to_exitcode(native['wait_status']), wait_exit)
+    try:
+        actual = os.waitstatus_to_exitcode(status)
+    except ValueError as error:
+        raise AssertionError('native_result.wait_status does not encode a process exit or signal') from error
+    assert_equal(actual, wait_exit)

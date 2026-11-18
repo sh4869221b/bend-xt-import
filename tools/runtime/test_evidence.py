@@ -201,7 +201,7 @@ class EvidenceTests(unittest.TestCase):
                                            ('SIGKILL',signal.SIGKILL,True), ('timeout',signal.SIGKILL,True)]:
             with self.subTest(termination=termination):
                 code=128+sig
-                native={'exit':code,'signal':sig,'wait_status':sig}
+                native={'exit':code,'signal':int(sig),'wait_status':int(sig)}
                 row={'exit':code,'docker_client_exit':code,'native_result':native,'external_kill':external,
                      'kill_signal':sig.name if external else None,'timed_out':termination=='timeout',
                      'oom_killed':termination=='oom','events_before':{'oom_kill':0},
@@ -216,13 +216,39 @@ class EvidenceTests(unittest.TestCase):
                         measure.check_termination(missing,code,termination)
                 for update in [{'docker_client_exit':125}, {'native_result':{**native,'exit':91}},
                                {'native_result':{**native,'wait_status':code<<8}},
+                               {'native_result':{**native,'signal':float(sig)}},
                                {'timed_out':not row['timed_out']}, {'oom_killed':not row['oom_killed']},
+                               *[{field:int(row[field])} for field in ('oom_killed','timed_out','external_kill')],
                                {'native_result':None}, {'final_cgroup':None}]:
                     with self.subTest(update=update), self.assertRaises(AssertionError):
                         measure.check_termination({**row,**update},code,termination)
                 bad_count=int(termination!='oom')
                 with self.assertRaises(AssertionError):
                     measure.check_termination({**missing,'samples':[{'events':{'oom_kill':bad_count}}]},code,termination)
+
+    def test_termination_evidence_requires_json_types_and_kernel_widths(self):
+        observation=self.case_record('P01-exit-0','argv_exit',['exit',0])
+        row=json.loads((self.root/observation['observation']).read_text())
+        measure.check_termination(row,0,'exit')
+        native=row['native_result']
+        for field in ('exit','docker_client_exit','native_result.exit','native_result.wait_status'):
+            is_native=field.startswith('native_result.')
+            key=field.rsplit('.',1)[-1]
+            maximum=65535 if key=='wait_status' else 255
+            values=(False,True,0.0,'0',None,-1,maximum+1,1<<32)
+            for value in values:
+                update={'native_result':{**native,key:value}} if is_native else {key:value}
+                with self.subTest(field=field,value=value), self.assertRaisesRegex(AssertionError,'must be an integer'):
+                    measure.check_termination({**row,**update},0,'exit')
+        for flag in ('oom_killed','timed_out','external_kill'):
+            for value in (0,0.0,'false',None):
+                with self.subTest(flag=flag,value=value), self.assertRaisesRegex(AssertionError,'expected boolean'):
+                    measure.check_termination({**row,flag:value},0,'exit')
+        for status in (0x7f,0xffff):
+            with self.subTest(status=status), self.assertRaisesRegex(AssertionError,'does not encode a process exit'):
+                measure.check_termination({**row,'native_result':{**native,'wait_status':status}},0,'exit')
+        measure.check_termination({**row,'exit':255,'docker_client_exit':255,
+                                   'native_result':{**native,'exit':255,'wait_status':255<<8}},255,'exit')
 
     def test_oom_counter_must_not_decrease_at_any_observation_boundary(self):
         row={'exit':137,'docker_client_exit':137,'native_result':{'exit':137,'signal':9,'wait_status':9},
