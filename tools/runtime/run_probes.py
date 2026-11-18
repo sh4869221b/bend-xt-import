@@ -2,9 +2,9 @@
 import argparse
 import errno
 import random
-import re
 
 from experiment import ROOT, run_probe
+from fault_trace import check_fault_trace
 from integrity import inputs, observation_reference, record
 from case_spec import expected
 
@@ -27,14 +27,7 @@ def check_result(row, directory, expected, output, inspect, fault):
     if output is not None:
         assert_equal(row['stdout'], output)
     if fault:
-        trace = row['fault_trace']
-        if len(trace.splitlines()) < 2:
-            raise AssertionError('interposer armed but no injection reached')
-        if fault['MODE']=='short':
-            split=int(fault['SPLIT'])
-            first=re.search(r'request call=1 bytes=(\d+)',trace)
-            if not first or int(first[1])<=split or f'short call=1 bytes={split}' not in trace or 'call=2 ' not in trace:
-                raise AssertionError('requested short IO was not applied and retried')
+        check_fault_trace(row['fault_trace'], fault)
     if inspect:
         inspect(row, directory)
 

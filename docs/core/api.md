@@ -132,8 +132,9 @@ the [Microsoft mapping published by Unicode](https://www.unicode.org/Public/MAPP
 and OwnedBytes output. Status 0 means input exhausted, 1 means drain and clear or
 replace the output, and 2 means sticky error. Status 4 means the next packet
 exceeds the output's total capacity. Drain any output prefix and supply a buffer
-with capacity at least the byte count in the `Pending` packet (up to 4 for UTF-8,
-1 for CP1252). Status 3 is internal only.
+with space for the whole packet. An empty buffer with capacity 4 always has enough
+space for a pending UTF-8 packet. Call `Bytes.clear` after `Bytes.new(budget,4)`
+to obtain an empty buffer with that capacity. Status 3 is internal only.
 
 For statuses 1 and 4, resume with the returned `Pending` state, the same input,
 and the returned `next` index. The pending scalar has already been inspected.

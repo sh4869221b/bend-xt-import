@@ -2,6 +2,8 @@
 import json
 import contextlib
 import io
+import shutil
+import signal
 import subprocess
 import sys
 from pathlib import Path
@@ -12,7 +14,8 @@ import experiment
 import measure
 import run_probes
 import summarize
-from case_spec import API, expected, validate
+from case_spec import API, RESOURCE, expected, validate
+from fault_trace import check_fault_trace
 from integrity import digest, inputs, observation_reference
 
 
@@ -91,8 +94,9 @@ class EvidenceTests(unittest.TestCase):
     def test_resource_inventory_finalization(self):
         # Native behavior is tested separately. Exercise both runner control paths
         # without Docker, including the completion/inventory call after the loop.
-        result={'exit':0,'stdout':'','timed_out':False,'oom_killed':False,
-                'external_kill':False,'samples':[],'native_result':None}
+        result={'exit':0,'docker_client_exit':0,'stdout':'','timed_out':False,'oom_killed':False,
+                'external_kill':False,'kill_signal':None,'samples':[],'events_before':{'oom_kill':0},
+                'native_result':{'exit':0,'wait_status':0,'signal':None}}
         for group in ['budget','shapes']:
             with patch.object(measure,'ROOT',self.root), \
                  patch.object(measure,'run_probe',return_value=(result,self.root/'runs/case')), \
@@ -110,8 +114,9 @@ class EvidenceTests(unittest.TestCase):
         row={'case':label,'probe':probe,'scratch':directory.name,'binary_sha256':'binary',
              'args_base64':experiment.encoded_arguments(arguments),'options':experiment.execution_options(**options),
              'exit':code,'docker_client_exit':code,'stdout':output,'timed_out':False,'oom_killed':False,
-             'external_kill':False,'limits':{'memory.max':'1073741824','memory.swap.max':'0'},
-             'samples':[],'native_result':None,'build_sha256':'build'}
+             'external_kill':False,'kill_signal':None,'limits':{'memory.max':'1073741824','memory.swap.max':'0'},
+             'samples':[],'events_before':{'oom_kill':0},'native_result':{'exit':code,'wait_status':code<<8,
+             'signal':None,'maxrss_bytes':100},'build_sha256':'build'}
         (directory/'observation.json').write_text(json.dumps(row))
         return {'case':label,'result':'pass',**observation_reference(self.root,directory)}
 
@@ -162,6 +167,119 @@ class EvidenceTests(unittest.TestCase):
             records[0]['metrics']['memory_peak']=1
             with self.assertRaisesRegex(ValueError,'resource metrics differ'):
                 seal()
+
+    def test_resource_summary_rejects_conflicting_exit_evidence(self):
+        label='P10-over'
+        entry=self.case_record(label,'budget_work',['reserve',268435456,268435456,1],5)
+        path=self.root/entry['observation']
+        valid=json.loads(path.read_text())
+        recipes=measure.run_cases
+        def only_over(group, case):
+            recipes(group,lambda name,*args,**kwargs: case(name,*args,**kwargs) if name==label else None)
+        def seal():
+            row=json.loads(path.read_text())
+            case={**entry,'sha256':digest(path),'metrics':measure.summarize(row)}
+            data={'complete':True,'group':'budget','execution_inputs':{},'cases':[case]}
+            return summarize.summarize_suite(data,'resource','budget',{}, {'build_sha256':'build'},
+                                             {'budget_work':'binary'},set())
+        with patch.object(summarize,'ROOT',self.root), patch.dict(RESOURCE,{'budget':[label]}), \
+             patch.object(measure,'run_cases',only_over):
+            self.assertEqual(seal()[0]['exit'],5)
+            for update in [{'docker_client_exit':125}, {'native_result':{**valid['native_result'],'exit':91}},
+                           {'native_result':None}]:
+                with self.subTest(update=update):
+                    path.write_text(json.dumps({**valid,**update}))
+                    with self.assertRaises(ValueError):
+                        seal()
+
+    def test_abnormal_resource_termination_uses_case_specific_evidence(self):
+        for termination, sig, external in [('oom',signal.SIGKILL,False), ('SIGTERM',signal.SIGTERM,True),
+                                           ('SIGKILL',signal.SIGKILL,True), ('timeout',signal.SIGKILL,True)]:
+            with self.subTest(termination=termination):
+                code=128+sig
+                native={'exit':code,'signal':sig,'wait_status':sig}
+                row={'exit':code,'docker_client_exit':code,'native_result':native,'external_kill':external,
+                     'kill_signal':sig.name if external else None,'timed_out':termination=='timeout',
+                     'oom_killed':termination=='oom','events_before':{'oom_kill':0},
+                     'samples':[{'events':{'oom_kill':int(termination=='oom')}}]}
+                measure.check_termination(row,code,termination)
+                if sig==signal.SIGKILL:
+                    measure.check_termination({**row,'native_result':None},code,termination)
+                else:
+                    with self.assertRaises(AssertionError):
+                        measure.check_termination({**row,'native_result':None},code,termination)
+                for update in [{'docker_client_exit':125}, {'native_result':{**native,'exit':91}},
+                               {'native_result':{**native,'wait_status':code<<8}},
+                               {'timed_out':not row['timed_out']}, {'oom_killed':not row['oom_killed']},
+                               {'samples':[{'events':{'oom_kill':int(termination!='oom')}}]}]:
+                    with self.subTest(update=update), self.assertRaises(AssertionError):
+                        measure.check_termination({**row,**update},code,termination)
+
+    def test_close_gap_requires_close_failure(self):
+        row={'exit':0,'docker_client_exit':0,'timed_out':False,'oom_killed':False,
+             'external_kill':False,'stdout':'complete\n'}
+        fault={'OP':'close','MODE':'error'}
+        for bad in ['read armed call=0 bytes=7\nread real call=1 bytes=8\n',
+                    'close armed call=0 bytes=7\nclose real call=1 bytes=0\n',
+                    'close EIO-after-close call=1 bytes=0\nclose armed call=0 bytes=7\n']:
+            with self.subTest(trace=bad), self.assertRaises(AssertionError):
+                run_probes.check_result({**row,'fault_trace':bad},self.root,0,'complete\n',None,fault)
+        trace='close armed call=0 bytes=7\nclose EIO-after-close call=1 bytes=0\n'
+        run_probes.check_result({**row,'fault_trace':trace},self.root,0,'complete\n',None,fault)
+
+    def test_fault_modes_require_the_injection_and_any_retry_in_order(self):
+        short=['request call=1 bytes=8','short call=1 bytes=7']
+        cases=[
+            ('read','short',short+['request call=2 bytes=1','unchanged call=2 bytes=1']),
+            ('pread','eintr',['EINTR call=1 bytes=8','real call=2 bytes=8']),
+            ('write','error',['EIO call=1 bytes=8']),
+            ('pwrite','zero',['zero call=1 bytes=8']),
+            ('pread','partial-error',short+['EIO call=2 bytes=1']),
+            ('read','transient-error',short+['EIO call=2 bytes=1','real call=3 bytes=8']),
+            ('pwrite','enospc',short+['ENOSPC call=2 bytes=1']),
+            ('write','stall',short+['stall call=2 bytes=1']),
+            ('malloc','error',['ENOMEM call=1 bytes=8193']),
+            ('realloc','error',['ENOMEM call=1 bytes=128']),
+        ]
+        for op,mode,events in cases:
+            with self.subTest(operation=op,mode=mode):
+                fault={'OP':op,'MODE':mode}
+                trace='\n'.join(f'{op} {line}' for line in ['armed call=0 bytes=7',*events])+'\n'
+                check_fault_trace(trace,fault)
+                with self.assertRaises(AssertionError):
+                    check_fault_trace(trace.removesuffix(f'{op} {events[-1]}\n'),fault)
+                with self.assertRaises(AssertionError):
+                    check_fault_trace(trace.replace(f'\n{op} ', '\nclose ',1),fault)
+
+    def test_stream_checks_expected_size_and_bytes_of_both_files(self):
+        row={'timed_out':False,'oom_killed':False,'external_kill':False}
+        def case(label, probe, prepare, check, **kwargs):
+            if label!='M-stream-1048576-0':
+                return
+            source=self.root/'input.bin'
+            output=self.root/'output.bin'
+            source.touch()
+            output.touch()
+            with self.assertRaises(AssertionError):
+                check(row,self.root)
+            prepare(self.root)
+            shutil.copyfile(source,output)
+            check(row,self.root)
+            for path in (source,output):
+                with path.open('r+b') as stream:
+                    stream.write(b'wrong')
+            with self.assertRaises(AssertionError):
+                check(row,self.root)
+        measure.run_cases('stream',case)
+
+    def test_native_samples_preserve_missing_values(self):
+        metrics=measure.summarize({'samples':[{'native_process':True,'memory_current':7,'VmHWM_bytes':8},
+                                              {'native_process':False,'VmRSS_bytes':100},
+                                              {'native_process':True,'VmHWM_bytes':9,'VmSize_bytes':None}]})
+        self.assertIsNone(metrics['VmRSS_bytes'])
+        self.assertIsNone(metrics['VmSize_bytes'])
+        self.assertEqual(metrics['VmHWM_bytes'],9)
+        self.assertEqual(metrics['memory_current'],7)
 
     def test_hard_stop_invalidates_previous_suite(self):
         module_dir=Path(__file__).resolve().parent

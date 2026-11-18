@@ -1,7 +1,11 @@
 """Bounded native resource experiments; an expected OOM is never a capability pass."""
 import argparse
+import hashlib
+import os
 import platform
+import signal
 from experiment import ROOT, run_probe
+from fault_trace import check_fault_trace
 from integrity import inputs, observation_reference, record
 from case_spec import expected
 from run_probes import assert_equal
@@ -10,25 +14,72 @@ from run_probes import assert_equal
 def summarize(r):
     native = [s for s in r['samples'] if s['native_process']]
     def peak(key):
-        return max((s.get(key, 0) for s in native), default=None)
+        return max((value for s in native if (value := s.get(key)) is not None), default=None)
     result = {key: peak(key) for key in ['VmRSS_bytes', 'VmHWM_bytes', 'VmSize_bytes', 'memory_current', 'memory_peak']}
     result['ru_maxrss_bytes'] = (r.get('native_result') or {}).get('maxrss_bytes')
     return result
 
 
-def check_normal_termination(row):
-    if row['timed_out'] or row['oom_killed'] or row['external_kill']:
-        raise AssertionError('unexpected termination')
-
-
-def check_result(row, directory, expected, output, check):
+def check_termination(row, expected, termination):
+    oom = termination == 'oom'
+    timed_out = termination == 'timeout'
+    external = termination not in {'exit', 'oom'}
+    native_signal = {'exit': None, 'oom': signal.SIGKILL, 'SIGKILL': signal.SIGKILL,
+                     'SIGTERM': signal.SIGTERM, 'timeout': signal.SIGKILL}[termination]
+    supervised_signal = native_signal.name if external else None
     assert_equal(row['exit'], expected)
+    assert_equal(row['docker_client_exit'], expected)
+    assert_equal((row['oom_killed'], row['timed_out'], row['external_kill'], row['kill_signal']),
+                 (oom, timed_out, external, supervised_signal))
+
+    before = row['events_before']['oom_kill']
+    samples = [sample['events']['oom_kill'] for sample in row['samples']]
+    final = row.get('final_cgroup')
+    if final is not None:
+        samples.append(final['events']['oom_kill'])
+    if (max(samples, default=before) > before) != oom:
+        raise AssertionError('cgroup OOM kill evidence differs from expected termination')
+
+    native = row['native_result']
+    if native is None:
+        # SIGKILL can stop the wait4 helper before it writes a result.
+        if native_signal != signal.SIGKILL:
+            raise AssertionError('native exit evidence is missing')
+        return
+    assert_equal(native['exit'], expected)
+    assert_equal(native['signal'], native_signal)
+    wait_exit = expected if native_signal is None else -native_signal
+    assert_equal(os.waitstatus_to_exitcode(native['wait_status']), wait_exit)
+
+
+def check_result(row, directory, expected, output, check, *, termination='exit', fault=None):
+    check_termination(row, expected, termination)
     if output is not None:
         assert_equal(row['stdout'], output)
+    if fault:
+        check_fault_trace(row['fault_trace'], fault)
     if check:
         check(row, directory)
-    else:
-        check_normal_termination(row)
+
+
+STREAM_BLOCK = bytes(range(256)) * 256
+
+
+def stream_digest(size):
+    digest = hashlib.sha256()
+    for _ in range(size // len(STREAM_BLOCK)):
+        digest.update(STREAM_BLOCK)
+    return digest.digest()
+
+
+def check_stream(directory, size, digest):
+    for name in ('input.bin', 'output.bin'):
+        path = directory / name
+        if path.stat().st_size != size:
+            raise AssertionError(f'{name}: expected stream size {size}')
+        with path.open('rb') as stream:
+            if hashlib.file_digest(stream, 'sha256').digest() != digest:
+                raise AssertionError(f'{name}: stream digest differs from recipe')
 
 
 def run_cases(group, case):
@@ -63,43 +114,26 @@ def run_cases(group, case):
         case('M-charge-256MiB','charged_array',[24,268435456,3],timeout=120,
              output=f'reserved=268435456\nlive=array-u32\nchecksum={checksum}\nreleased=0\n'*3+'complete\n')
         case('M-charge-one-over','charged_array',[24,268435455,1],expected=5,output='')
-        def oom(r,p):
-            assert_equal(r['oom_killed'],True)
-            assert_equal(r['external_kill'],False)
-            assert_equal(r['timed_out'],False)
+        def incomplete(r,p):
             assert_equal('complete' in r['stdout'],False)
-            observed=max((s['events'].get('oom_kill',0) for s in r['samples']),default=0)
-            observed=max(observed,(r.get('final_cgroup') or {}).get('events',{}).get('oom_kill',0))
-            if observed <= r['events_before'].get('oom_kill',0):
-                raise AssertionError('OOM kill counter was not captured; cannot certify this run')
-        case('M-oom-small','memory_pressure',[512,20,0],memory=134217728,expected=137,check=oom,timeout=120)
-        case('M-oom-1GiB','memory_pressure',[512,22,0],expected=137,check=oom,timeout=240)
-        for signal,code in [('SIGTERM',143),('SIGKILL',137)]:
-            def killed(r,p):
-                assert_equal(r['external_kill'],True);assert_equal(r['oom_killed'],False)
-                assert_equal(r['timed_out'],False);assert_equal('complete' in r['stdout'],False)
-                assert_equal(r['kill_signal'],signal)
-            case('M-'+signal,'memory_pressure',[100,18,100],expected=code,kill_after=.5,kill_signal=signal,check=killed)
-        def timeout_check(r,p):
-            assert_equal(r['timed_out'],True);assert_equal(r['oom_killed'],False)
-            assert_equal(r['external_kill'],True);assert_equal(r['kill_signal'],'SIGKILL')
-        case('M-timeout','memory_pressure',[100,18,100],expected=137,timeout=.5,check=timeout_check)
+        case('M-oom-small','memory_pressure',[512,20,0],memory=134217728,expected=137,termination='oom',check=incomplete,timeout=120)
+        case('M-oom-1GiB','memory_pressure',[512,22,0],expected=137,termination='oom',check=incomplete,timeout=240)
+        for signal_name,code in [('SIGTERM',143),('SIGKILL',137)]:
+            case('M-'+signal_name,'memory_pressure',[100,18,100],expected=code,kill_after=.5,
+                 kill_signal=signal_name,termination=signal_name,check=incomplete)
+        case('M-timeout','memory_pressure',[100,18,100],expected=137,timeout=.5,termination='timeout',check=incomplete)
         def as_failed(r,p):
-            check_normal_termination(r)
             if not r['stderr']: raise AssertionError('missing mapping failure diagnostic')
         case('M-AS-is-not-RSS','memory_shapes',[0,8,1,100],expected=1,rlimit_as=1073741824,check=as_failed)
-        for op,signal,code,deadline in [('read','SIGTERM',143,False),('write','SIGKILL',137,False),('write','SIGKILL',137,True)]:
+        for op,signal_name,code,deadline in [('read','SIGTERM',143,False),('write','SIGKILL',137,False),('write','SIGKILL',137,True)]:
             def stopped_io(r,p):
-                assert_equal(r['external_kill'],True);assert_equal(r['oom_killed'],False)
-                assert_equal(r['timed_out'],deadline)
-                assert_equal(r['kill_signal'],signal)
-                assert_equal('stall' in r['fault_trace'],True)
-                assert_equal('complete' in r['stdout'],False)
+                incomplete(r,p)
                 if op=='write': assert_equal((p/'output.bin').read_bytes(),bytes([0,1,2,3,4,255,0]))
                 else: assert_equal((p/'input.bin').read_bytes(),bytes(range(64)))
-            case('M-IO-'+op+'-'+('timeout' if deadline else signal),'short_io',[op],expected=code,
+            termination='timeout' if deadline else signal_name
+            case('M-IO-'+op+'-'+termination,'short_io',[op],expected=code,termination=termination,
                  prepare=(lambda p:(p/'input.bin').write_bytes(bytes(range(64)))) if op=='read' else None,
-                 fault={'OP':op,'MODE':'stall'},kill_signal=signal,kill_after=None if deadline else .5,
+                 fault={'OP':op,'MODE':'stall'},kill_signal=signal_name,kill_after=None if deadline else .5,
                  timeout=.5 if deadline else 45,check=stopped_io)
         # Raw 256MiB index payload; this deliberately bypasses a live guard to measure feasibility.
         n=2**24;checksum=(n*(n-1)//2+32640*(n//256)+n)&0xffffffff
@@ -107,20 +141,14 @@ def run_cases(group, case):
              output=f'live=index-array\nreleased-checksum={checksum}\ncomplete\n')
     if group in ['all','stream']:
         for size in [1048576,16777216,67108864]:
+            digest = stream_digest(size)
+            def prepare(p):
+                with (p/'input.bin').open('wb') as f:
+                    for _ in range(size // len(STREAM_BLOCK)):
+                        f.write(STREAM_BLOCK)
+            def inspect(r,p):
+                check_stream(p, size, digest)
             for rep in range(3):
-                def prepare(p):
-                    with (p/'input.bin').open('wb') as f:
-                        block=bytes(range(256))*256
-                        for _ in range(size//len(block)): f.write(block)
-                def inspect(r,p):
-                    import hashlib
-                    check_normal_termination(r)
-                    def digest(path):
-                        h=hashlib.sha256()
-                        with path.open('rb') as f:
-                            while chunk:=f.read(65536):h.update(chunk)
-                        return h.digest()
-                    assert_equal(digest(p/'input.bin'),digest(p/'output.bin'))
                 case(f'M-stream-{size}-{rep}','chunk_stream',prepare=prepare,output=str(size)+'\n',check=inspect,timeout=240)
 
 
@@ -133,10 +161,11 @@ def main():
     snapshot=inputs(ROOT)
     output_path=ROOT/'runs'/('measure-'+args.group+'.json')
     record(output_path, {'schema':1,'group':args.group,'complete':False,'execution_inputs':snapshot,'cases':[]})
-    def case(label, probe, arguments=(), prepare=None, expected=0, output=None, check=None, **kwargs):
+    def case(label, probe, arguments=(), prepare=None, expected=0, output=None, check=None,
+             termination='exit', fault=None, **kwargs):
         try:
-            row, directory = run_probe(probe, arguments, prepare, case=label, **kwargs)
-            check_result(row, directory, expected, output, check)
+            row, directory = run_probe(probe, arguments, prepare, case=label, fault=fault, **kwargs)
+            check_result(row, directory, expected, output, check, termination=termination, fault=fault)
             metrics = summarize(row)
             records.append({'case': label, 'result': 'pass', 'metrics': metrics,
                             **observation_reference(ROOT, directory)})

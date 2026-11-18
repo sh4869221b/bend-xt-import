@@ -1,6 +1,8 @@
 """Verify each recorded runtime case before sealing the completed suites."""
+import argparse
 import hashlib
 import json
+from pathlib import Path
 import statistics
 from experiment import ROOT, encoded_arguments, execution_options, verified_build
 from integrity import digest, inputs
@@ -38,7 +40,7 @@ def summarize_suite(data, kind, group, snapshot, identity, binaries, seen):
     results = []
 
     def case(label, probe, arguments=(), prepare=None, expected=0, output=None,
-             inspect=None, check=None, fault=None, gap=None, **kwargs):
+             inspect=None, check=None, fault=None, gap=None, termination='exit', **kwargs):
         entry = next(entries)
         if entry['case'] != label or entry.get('verified_gap') != gap:
             raise ValueError(f'{label}: case label or verified gap differs')
@@ -52,7 +54,7 @@ def summarize_suite(data, kind, group, snapshot, identity, binaries, seen):
                 if gap is not None:
                     item['verified_gap'] = gap
             else:
-                measure.check_result(row, directory, expected, output, check)
+                measure.check_result(row, directory, expected, output, check, termination=termination, fault=fault)
                 item['metrics'] = measure.summarize(row)
                 if entry['metrics'] != item['metrics']:
                     raise AssertionError('resource metrics differ from observation')
@@ -68,6 +70,9 @@ def summarize_suite(data, kind, group, snapshot, identity, binaries, seen):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--output-dir', type=Path, default=ROOT/'docs/runtime/evidence')
+    out = parser.parse_args().output_dir
     binaries=verified_build()
     snapshot=inputs(ROOT)
     files=[ROOT/'runs/suite-all.json',ROOT/'runs/measure-all.json']
@@ -101,7 +106,6 @@ def main():
             stats[metric]={'n':len(values),'min':min(values) if values else None,
                            'median':statistics.median(values) if values else None,'max':max(values) if values else None}
         summary['shape_metrics' if key.startswith('M-shape') else 'stream_metrics'][key]=stats
-    out=ROOT/'docs/runtime/evidence'
     out.mkdir(parents=True,exist_ok=True)
     (out/'linux-summary.json').write_text(json.dumps(summary,indent=2)+'\n')
     (out/'linux-build.json').write_bytes((ROOT/'build/build.json').read_bytes())
