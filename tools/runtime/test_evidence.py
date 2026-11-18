@@ -96,12 +96,12 @@ class EvidenceTests(unittest.TestCase):
         # without Docker, including the completion/inventory call after the loop.
         result={'exit':0,'docker_client_exit':0,'stdout':'','timed_out':False,'oom_killed':False,
                 'external_kill':False,'kill_signal':None,'samples':[],'events_before':{'oom_kill':0},
-                'native_result':{'exit':0,'wait_status':0,'signal':None}}
+                'native_result':{'exit':0,'wait_status':0,'signal':None},'final_cgroup':{'events':{'oom_kill':0}}}
         for group in ['budget','shapes']:
             with patch.object(measure,'ROOT',self.root), \
                  patch.object(measure,'run_probe',return_value=(result,self.root/'runs/case')), \
                  patch.object(measure,'observation_reference',return_value={'sha256':'fixture'}), \
-                 patch.object(measure,'assert_equal'), \
+                 patch.object(measure,'check_result'), \
                  patch.object(sys,'argv',['measure.py','--group',group]), \
                  contextlib.redirect_stdout(io.StringIO()):
                 measure.main()
@@ -116,7 +116,7 @@ class EvidenceTests(unittest.TestCase):
              'exit':code,'docker_client_exit':code,'stdout':output,'timed_out':False,'oom_killed':False,
              'external_kill':False,'kill_signal':None,'limits':{'memory.max':'1073741824','memory.swap.max':'0'},
              'samples':[],'events_before':{'oom_kill':0},'native_result':{'exit':code,'wait_status':code<<8,
-             'signal':None,'maxrss_bytes':100},'build_sha256':'build'}
+             'signal':None,'maxrss_bytes':100},'final_cgroup':{'events':{'oom_kill':0}},'build_sha256':'build'}
         (directory/'observation.json').write_text(json.dumps(row))
         return {'case':label,'result':'pass',**observation_reference(self.root,directory)}
 
@@ -137,12 +137,16 @@ class EvidenceTests(unittest.TestCase):
                      for record,other in zip(records,reversed(records))]
             with self.assertRaisesRegex(ValueError,'observation case or scratch differs'):
                 seal(swapped)
+            path=self.root/records[0]['observation']
+            valid=json.loads(path.read_text())
+            native=valid['native_result']
             mutations=[('args_base64',experiment.encoded_arguments(['exit',7]),'invocation'),
                        ('options',experiment.execution_options(rlimit_as=1),'invocation'),
                        ('binary_sha256','different','build or runner identity'),
-                       ('exit',7,'expected 0, observed 7'),('stdout','wrong','expected.*observed')]
-            path=self.root/records[0]['observation']
-            valid=json.loads(path.read_text())
+                       ('exit',7,'expected 0, observed 7'),('stdout','wrong','expected.*observed'),
+                       ('native_result',{**native,'exit':91},'expected 0, observed 91'),
+                       ('native_result',{**native,'signal':signal.SIGTERM},'expected None, observed'),
+                       ('native_result',{**native,'wait_status':7<<8},'expected 0, observed 7')]
             for field,value,message in mutations:
                 with self.subTest(field=field):
                     path.write_text(json.dumps({**valid,field:value}))
@@ -186,7 +190,7 @@ class EvidenceTests(unittest.TestCase):
              patch.object(measure,'run_cases',only_over):
             self.assertEqual(seal()[0]['exit'],5)
             for update in [{'docker_client_exit':125}, {'native_result':{**valid['native_result'],'exit':91}},
-                           {'native_result':None}]:
+                           {'native_result':None}, {'final_cgroup':None}]:
                 with self.subTest(update=update):
                     path.write_text(json.dumps({**valid,**update}))
                     with self.assertRaises(ValueError):
@@ -201,23 +205,40 @@ class EvidenceTests(unittest.TestCase):
                 row={'exit':code,'docker_client_exit':code,'native_result':native,'external_kill':external,
                      'kill_signal':sig.name if external else None,'timed_out':termination=='timeout',
                      'oom_killed':termination=='oom','events_before':{'oom_kill':0},
-                     'samples':[{'events':{'oom_kill':int(termination=='oom')}}]}
+                     'samples':[{'events':{'oom_kill':int(termination=='oom')}}],
+                     'final_cgroup':{'events':{'oom_kill':int(termination=='oom')}}}
                 measure.check_termination(row,code,termination)
+                missing={**row,'native_result':None,'final_cgroup':None}
                 if sig==signal.SIGKILL:
-                    measure.check_termination({**row,'native_result':None},code,termination)
+                    measure.check_termination(missing,code,termination)
                 else:
                     with self.assertRaises(AssertionError):
-                        measure.check_termination({**row,'native_result':None},code,termination)
+                        measure.check_termination(missing,code,termination)
                 for update in [{'docker_client_exit':125}, {'native_result':{**native,'exit':91}},
                                {'native_result':{**native,'wait_status':code<<8}},
                                {'timed_out':not row['timed_out']}, {'oom_killed':not row['oom_killed']},
-                               {'samples':[{'events':{'oom_kill':int(termination!='oom')}}]}]:
+                               {'native_result':None}, {'final_cgroup':None}]:
                     with self.subTest(update=update), self.assertRaises(AssertionError):
                         measure.check_termination({**row,**update},code,termination)
+                bad_count=int(termination!='oom')
+                with self.assertRaises(AssertionError):
+                    measure.check_termination({**missing,'samples':[{'events':{'oom_kill':bad_count}}]},code,termination)
+
+    def test_oom_counter_must_not_decrease_at_any_observation_boundary(self):
+        row={'exit':137,'docker_client_exit':137,'native_result':{'exit':137,'signal':9,'wait_status':9},
+             'oom_killed':True,'external_kill':False,'timed_out':False,'kill_signal':None,
+             'events_before':{'oom_kill':0},'samples':[{'events':{'oom_kill':1}}],
+             'final_cgroup':{'events':{'oom_kill':1}}}
+        measure.check_termination(row,137,'oom')
+        for update in [{'events_before':{'oom_kill':2}},
+                       {'samples':row['samples']+[{'events':{'oom_kill':0}}]},
+                       {'final_cgroup':{'events':{'oom_kill':0}}}]:
+            with self.subTest(update=update), self.assertRaisesRegex(AssertionError,'counter decreased'):
+                measure.check_termination({**row,**update},137,'oom')
 
     def test_close_gap_requires_close_failure(self):
-        row={'exit':0,'docker_client_exit':0,'timed_out':False,'oom_killed':False,
-             'external_kill':False,'stdout':'complete\n'}
+        observation=self.case_record('P06-close-error','short_io',['write'],output='complete\n')
+        row=json.loads((self.root/observation['observation']).read_text())
         fault={'OP':'close','MODE':'error'}
         for bad in ['read armed call=0 bytes=7\nread real call=1 bytes=8\n',
                     'close armed call=0 bytes=7\nclose real call=1 bytes=0\n',
@@ -245,11 +266,37 @@ class EvidenceTests(unittest.TestCase):
             with self.subTest(operation=op,mode=mode):
                 fault={'OP':op,'MODE':mode}
                 trace='\n'.join(f'{op} {line}' for line in ['armed call=0 bytes=7',*events])+'\n'
-                check_fault_trace(trace,fault)
+                transfer=(8,8) if mode=='short' else None
+                check_fault_trace(trace,fault,short_transfer=transfer)
                 with self.assertRaises(AssertionError):
-                    check_fault_trace(trace.removesuffix(f'{op} {events[-1]}\n'),fault)
+                    check_fault_trace(trace.removesuffix(f'{op} {events[-1]}\n'),fault,short_transfer=transfer)
                 with self.assertRaises(AssertionError):
-                    check_fault_trace(trace.replace(f'\n{op} ', '\nclose ',1),fault)
+                    check_fault_trace(trace.replace(f'\n{op} ', '\nclose ',1),fault,short_transfer=transfer)
+
+    def test_short_read_trace_accounts_for_all_reported_bytes_and_eof(self):
+        label='P06-read-short-7'
+        fault={'OP':'read','MODE':'short','SPLIT':7}
+        output=run_probes.byte_line(range(64))
+        entry=self.case_record(label,'short_io',['read'],output=output,fault=fault)
+        path=self.root/entry['observation']
+        row=json.loads(path.read_text())
+        trace=['read armed call=0 bytes=7']
+        for index in range(11):
+            trace.extend([f'read request call={index+1} bytes={8192-min(64,index*7)}',
+                          f'read short call={index+1} bytes=7'])
+        recipes=run_probes.run_cases
+        def only_short_read(group, case):
+            recipes(group,lambda name,*args,**kwargs: case(name,*args,**kwargs) if name==label else None)
+        def seal(lines):
+            path.write_text(json.dumps({**row,'fault_trace':'\n'.join(lines)+'\n'}))
+            data={'complete':True,'group':'faults','execution_inputs':{},'cases':[{**entry,'sha256':digest(path)}]}
+            return summarize.summarize_suite(data,'api','faults',{}, {'build_sha256':'build'}, {'short_io':'binary'},set())
+        with patch.object(summarize,'ROOT',self.root), patch.dict(API,{'faults':[label]}), \
+             patch.object(run_probes,'run_cases',only_short_read):
+            self.assertEqual(seal(trace)[0]['result'],'pass')
+            for incomplete in [trace[:5],trace[:-2]]:
+                with self.assertRaisesRegex(ValueError,'does not account for the expected transfer'):
+                    seal(incomplete)
 
     def test_stream_checks_expected_size_and_bytes_of_both_files(self):
         row={'timed_out':False,'oom_killed':False,'external_kill':False}
@@ -264,7 +311,8 @@ class EvidenceTests(unittest.TestCase):
                 check(row,self.root)
             prepare(self.root)
             shutil.copyfile(source,output)
-            check(row,self.root)
+            with patch.object(measure.hashlib,'file_digest',create=True,side_effect=AssertionError('requires Python 3.11')):
+                check(row,self.root)
             for path in (source,output):
                 with path.open('r+b') as stream:
                     stream.write(b'wrong')

@@ -40,7 +40,7 @@ def summarize_suite(data, kind, group, snapshot, identity, binaries, seen):
     results = []
 
     def case(label, probe, arguments=(), prepare=None, expected=0, output=None,
-             inspect=None, check=None, fault=None, gap=None, termination='exit', **kwargs):
+             inspect=None, check=None, fault=None, gap=None, termination='exit', short_transfer=None, **kwargs):
         entry = next(entries)
         if entry['case'] != label or entry.get('verified_gap') != gap:
             raise ValueError(f'{label}: case label or verified gap differs')
@@ -50,7 +50,7 @@ def summarize_suite(data, kind, group, snapshot, identity, binaries, seen):
                 **{key: row[key] for key in ('exit', 'oom_killed', 'timed_out', 'external_kill', 'limits')}}
         try:
             if kind == 'api':
-                run_probes.check_result(row, directory, expected, output, inspect, fault)
+                run_probes.check_result(row, directory, expected, output, inspect, fault, short_transfer=short_transfer)
                 if gap is not None:
                     item['verified_gap'] = gap
             else:

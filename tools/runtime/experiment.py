@@ -149,27 +149,29 @@ def run_probe(name, args=(), prepare=None, *, case, **options):
         final = None
         final_cgroup = None
         while attached.poll() is None:
-            try:
-                proc = Path('/proc', str(pid), 'status').read_text()
-                item = {'elapsed': time.monotonic() - native_start,
-                        'memory_current': int((cg / 'memory.current').read_text()),
-                        'memory_peak': int((cg / 'memory.peak').read_text()),
-                        'events': counters((cg / 'memory.events').read_text())}
-                for key in ['VmRSS', 'VmHWM', 'VmSize']:
-                    match = re.search(r'^' + key + r':\s+(\d+) kB$', proc, re.M)
-                    if match:
-                        item[key + '_bytes'] = int(match[1]) * 1024
-                process_name = re.search(r'^Name:\s+(.+)$', proc, re.M)
-                item['output_lines'] = (directory / 'stdout.log').read_bytes().count(b'\n')
-                item['native_process'] = bool(process_name and process_name[1] == name[:15])
-                samples.append(item)
-            except OSError:
-                pass  # The finite lifetime of the cgroup is reflected by missing final samples.
-            if final is None and (directory / 'native-result.json').exists():
-                final = json.loads((directory / 'native-result.json').read_text())
-                final_cgroup = {'events': counters((cg / 'memory.events').read_text()),
-                                'memory_peak': int((cg / 'memory.peak').read_text())}
-                (directory / '.release').touch(exist_ok=False)
+            # The paired final capture closes the cgroup sampling timeline.
+            if final is None:
+                try:
+                    proc = Path('/proc', str(pid), 'status').read_text()
+                    item = {'elapsed': time.monotonic() - native_start,
+                            'memory_current': int((cg / 'memory.current').read_text()),
+                            'memory_peak': int((cg / 'memory.peak').read_text()),
+                            'events': counters((cg / 'memory.events').read_text())}
+                    for key in ['VmRSS', 'VmHWM', 'VmSize']:
+                        match = re.search(r'^' + key + r':\s+(\d+) kB$', proc, re.M)
+                        if match:
+                            item[key + '_bytes'] = int(match[1]) * 1024
+                    process_name = re.search(r'^Name:\s+(.+)$', proc, re.M)
+                    item['output_lines'] = (directory / 'stdout.log').read_bytes().count(b'\n')
+                    item['native_process'] = bool(process_name and process_name[1] == name[:15])
+                    samples.append(item)
+                except OSError:
+                    pass  # The finite lifetime of the cgroup is reflected by missing final samples.
+                if (directory / 'native-result.json').exists():
+                    final = json.loads((directory / 'native-result.json').read_text())
+                    final_cgroup = {'events': counters((cg / 'memory.events').read_text()),
+                                    'memory_peak': int((cg / 'memory.peak').read_text())}
+                    (directory / '.release').touch(exist_ok=False)
             elapsed = time.monotonic() - native_start
             if (directory / 'stdout.log').stat().st_size + (directory / 'stderr.log').stat().st_size > 256 * 1024:
                 docker('kill', '--signal', 'SIGKILL', cid)

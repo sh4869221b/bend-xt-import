@@ -1,14 +1,12 @@
 """Bounded native resource experiments; an expected OOM is never a capability pass."""
 import argparse
 import hashlib
-import os
 import platform
-import signal
 from experiment import ROOT, run_probe
 from fault_trace import check_fault_trace
-from integrity import inputs, observation_reference, record
+from integrity import digest, inputs, observation_reference, record
 from case_spec import expected
-from run_probes import assert_equal
+from termination import assert_equal, check_termination
 
 
 def summarize(r):
@@ -18,38 +16,6 @@ def summarize(r):
     result = {key: peak(key) for key in ['VmRSS_bytes', 'VmHWM_bytes', 'VmSize_bytes', 'memory_current', 'memory_peak']}
     result['ru_maxrss_bytes'] = (r.get('native_result') or {}).get('maxrss_bytes')
     return result
-
-
-def check_termination(row, expected, termination):
-    oom = termination == 'oom'
-    timed_out = termination == 'timeout'
-    external = termination not in {'exit', 'oom'}
-    native_signal = {'exit': None, 'oom': signal.SIGKILL, 'SIGKILL': signal.SIGKILL,
-                     'SIGTERM': signal.SIGTERM, 'timeout': signal.SIGKILL}[termination]
-    supervised_signal = native_signal.name if external else None
-    assert_equal(row['exit'], expected)
-    assert_equal(row['docker_client_exit'], expected)
-    assert_equal((row['oom_killed'], row['timed_out'], row['external_kill'], row['kill_signal']),
-                 (oom, timed_out, external, supervised_signal))
-
-    before = row['events_before']['oom_kill']
-    samples = [sample['events']['oom_kill'] for sample in row['samples']]
-    final = row.get('final_cgroup')
-    if final is not None:
-        samples.append(final['events']['oom_kill'])
-    if (max(samples, default=before) > before) != oom:
-        raise AssertionError('cgroup OOM kill evidence differs from expected termination')
-
-    native = row['native_result']
-    if native is None:
-        # SIGKILL can stop the wait4 helper before it writes a result.
-        if native_signal != signal.SIGKILL:
-            raise AssertionError('native exit evidence is missing')
-        return
-    assert_equal(native['exit'], expected)
-    assert_equal(native['signal'], native_signal)
-    wait_exit = expected if native_signal is None else -native_signal
-    assert_equal(os.waitstatus_to_exitcode(native['wait_status']), wait_exit)
 
 
 def check_result(row, directory, expected, output, check, *, termination='exit', fault=None):
@@ -69,17 +35,16 @@ def stream_digest(size):
     digest = hashlib.sha256()
     for _ in range(size // len(STREAM_BLOCK)):
         digest.update(STREAM_BLOCK)
-    return digest.digest()
+    return digest.hexdigest()
 
 
-def check_stream(directory, size, digest):
+def check_stream(directory, size, expected_digest):
     for name in ('input.bin', 'output.bin'):
         path = directory / name
         if path.stat().st_size != size:
             raise AssertionError(f'{name}: expected stream size {size}')
-        with path.open('rb') as stream:
-            if hashlib.file_digest(stream, 'sha256').digest() != digest:
-                raise AssertionError(f'{name}: stream digest differs from recipe')
+        if digest(path) != expected_digest:
+            raise AssertionError(f'{name}: stream digest differs from recipe')
 
 
 def run_cases(group, case):
@@ -141,13 +106,13 @@ def run_cases(group, case):
              output=f'live=index-array\nreleased-checksum={checksum}\ncomplete\n')
     if group in ['all','stream']:
         for size in [1048576,16777216,67108864]:
-            digest = stream_digest(size)
+            expected_digest = stream_digest(size)
             def prepare(p):
                 with (p/'input.bin').open('wb') as f:
                     for _ in range(size // len(STREAM_BLOCK)):
                         f.write(STREAM_BLOCK)
             def inspect(r,p):
-                check_stream(p, size, digest)
+                check_stream(p, size, expected_digest)
             for rep in range(3):
                 case(f'M-stream-{size}-{rep}','chunk_stream',prepare=prepare,output=str(size)+'\n',check=inspect,timeout=240)
 

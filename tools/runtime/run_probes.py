@@ -7,27 +7,19 @@ from experiment import ROOT, run_probe
 from fault_trace import check_fault_trace
 from integrity import inputs, observation_reference, record
 from case_spec import expected
-
-
-def assert_equal(actual, expected):
-    if actual != expected:
-        raise AssertionError(f'expected {expected!r}, observed {actual!r}')
+from termination import assert_equal, check_termination
 
 
 def byte_line(data):
     return ''.join(str(x) + ',' for x in data) + '\n'
 
 
-def check_result(row, directory, expected, output, inspect, fault):
-    assert_equal(row['exit'], expected)
-    assert_equal(row['docker_client_exit'], expected)
-    assert_equal(row['timed_out'], False)
-    assert_equal(row['oom_killed'], False)
-    assert_equal(row['external_kill'], False)
+def check_result(row, directory, expected, output, inspect, fault, *, short_transfer=None):
+    check_termination(row, expected, 'exit')
     if output is not None:
         assert_equal(row['stdout'], output)
     if fault:
-        check_fault_trace(row['fault_trace'], fault)
+        check_fault_trace(row['fault_trace'], fault, short_transfer=short_transfer)
     if inspect:
         inspect(row, directory)
 
@@ -117,10 +109,11 @@ def run_cases(group, case):
                 data = bytes(range(256))*32 if large else source
                 command = op + '-long' if large and not is_read else op
                 written = bytes(8192) if large else bytes([0,1,2,3,4,255,0,33])
+                transfer = (8192, len(data)) if is_read else (len(written), len(written))
                 case(f'P06-{op}-short-{split}','short_io',[command],
                      prepare=(lambda p,data=data:(p/'input.bin').write_bytes(data)) if is_read else None,
                      output=byte_line(data) if is_read else 'complete\n',
-                     fault={'OP':op,'MODE':'short','SPLIT':split},
+                     fault={'OP':op,'MODE':'short','SPLIT':split},short_transfer=transfer,
                      inspect=None if is_read else lambda r,p,written=written:assert_equal((p/'output.bin').read_bytes(),written))
             for mode,code in modes:
                 output=None
@@ -161,11 +154,11 @@ def main():
     record(output_path, {'schema':1,'group':args.group,'complete':False,'execution_inputs':snapshot,'cases':[]})
 
     def case(label, probe, arguments=(), prepare=None, expected=0, output=None,
-             inspect=None, fault=None, gap=None, **kwargs):
+             inspect=None, fault=None, gap=None, short_transfer=None, **kwargs):
         directory = None
         try:
             r, directory = run_probe(probe, arguments, prepare, case=label, fault=fault, **kwargs)
-            check_result(r, directory, expected, output, inspect, fault)
+            check_result(r, directory, expected, output, inspect, fault, short_transfer=short_transfer)
             record = {'case': label, 'result': 'pass', **observation_reference(ROOT, directory)}
             if gap:
                 record['verified_gap'] = gap

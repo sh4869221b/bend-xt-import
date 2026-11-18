@@ -7,7 +7,21 @@ LINE = re.compile(r'([a-z]+) ([A-Za-z-]+) call=([0-9]+) bytes=([0-9]+)')
 IO_OPERATIONS = {'read', 'pread', 'write', 'pwrite'}
 
 
-def check_fault_trace(trace, fault):
+def short_transfer_complete(calls, requested, remaining):
+    # The trace gives the capped syscall requests. The fixture fixes the bytes
+    # available to read or the bytes to write, including whether a read needs EOF.
+    eof = False
+    for (_, request), (_, cap) in calls:
+        if eof or requested == 0 or request != requested:
+            return False
+        transferred = min(cap, remaining)
+        eof = transferred == 0
+        requested -= transferred
+        remaining -= transferred
+    return remaining == 0 and (requested == 0 or eof)
+
+
+def check_fault_trace(trace, fault, *, short_transfer=None):
     operation = fault['OP']
     mode = fault['MODE']
     split = int(fault.get('SPLIT', 7))
@@ -61,6 +75,8 @@ def check_fault_trace(trace, fault):
         if name[0] == 'request':
             requested = call[0][1]
             require(call[1] == ('short' if requested > split else 'unchanged', min(requested, split)))
+    if mode == 'short' and (short_transfer is None or not short_transfer_complete(calls, *short_transfer)):
+        raise AssertionError(f'{operation}/short: fault trace does not account for the expected transfer')
     if mode == 'eintr':
         require(calls[1][0][1] == calls[0][0][1])
     if mode in {'partial-error', 'transient-error', 'enospc', 'stall'}:
