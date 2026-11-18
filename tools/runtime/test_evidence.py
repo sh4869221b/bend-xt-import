@@ -146,7 +146,8 @@ class EvidenceTests(unittest.TestCase):
                        ('exit',7,'expected 0, observed 7'),('stdout','wrong','expected.*observed'),
                        ('native_result',{**native,'exit':91},'expected 0, observed 91'),
                        ('native_result',{**native,'signal':signal.SIGTERM},'expected None, observed'),
-                       ('native_result',{**native,'wait_status':7<<8},'expected 0, observed 7')]
+                       ('native_result',{**native,'wait_status':7<<8},'wait_status: expected 0x0000, observed 0x0700'),
+                       ('native_result',{**native,'wait_status':0x0080},'wait_status: expected 0x0000, observed 0x0080')]
             for field,value,message in mutations:
                 with self.subTest(field=field):
                     path.write_text(json.dumps({**valid,field:value}))
@@ -216,6 +217,8 @@ class EvidenceTests(unittest.TestCase):
                         measure.check_termination(missing,code,termination)
                 for update in [{'docker_client_exit':125}, {'native_result':{**native,'exit':91}},
                                {'native_result':{**native,'wait_status':code<<8}},
+                               {'native_result':{**native,'wait_status':0x0100|sig}},
+                               {'native_result':{**native,'wait_status':0x0080|sig}},
                                {'native_result':{**native,'signal':float(sig)}},
                                {'timed_out':not row['timed_out']}, {'oom_killed':not row['oom_killed']},
                                *[{field:int(row[field])} for field in ('oom_killed','timed_out','external_kill')],
@@ -244,8 +247,8 @@ class EvidenceTests(unittest.TestCase):
             for value in (0,0.0,'false',None):
                 with self.subTest(flag=flag,value=value), self.assertRaisesRegex(AssertionError,'expected boolean'):
                     measure.check_termination({**row,flag:value},0,'exit')
-        for status in (0x7f,0xffff):
-            with self.subTest(status=status), self.assertRaisesRegex(AssertionError,'does not encode a process exit'):
+        for status in (0x7f,0x0080,0xffff):
+            with self.subTest(status=status), self.assertRaisesRegex(AssertionError,'wait_status: expected 0x0000'):
                 measure.check_termination({**row,'native_result':{**native,'wait_status':status}},0,'exit')
         measure.check_termination({**row,'exit':255,'docker_client_exit':255,
                                    'native_result':{**native,'exit':255,'wait_status':255<<8}},255,'exit')

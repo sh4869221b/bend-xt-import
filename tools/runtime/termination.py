@@ -1,5 +1,4 @@
 """Verify the supervisor's termination evidence against the case recipe."""
-import os
 import signal
 
 
@@ -54,9 +53,8 @@ def check_termination(row, expected, termination):
         raise AssertionError('native_result.signal must be an integer or null')
     assert_equal(native['signal'], native_signal)
     status = checked_uint(native['wait_status'], 65535, 'native_result.wait_status')
-    wait_exit = expected if native_signal is None else -native_signal
-    try:
-        actual = os.waitstatus_to_exitcode(status)
-    except ValueError as error:
-        raise AssertionError('native_result.wait_status does not encode a process exit or signal') from error
-    assert_equal(actual, wait_exit)
+    # Linux stores the normal exit code in the high byte. The only signal
+    # outcomes in these recipes are SIGTERM and SIGKILL, with no core dump.
+    expected_status = expected << 8 if native_signal is None else native_signal.value
+    if status != expected_status:
+        raise AssertionError(f'native_result.wait_status: expected {expected_status:#06x}, observed {status:#06x}')
